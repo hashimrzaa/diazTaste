@@ -1,0 +1,118 @@
+# Dia's Taste chutney jar
+newmtl chutney_aloo-bukhara
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_aloo-bukhara.jpg
+
+newmtl chutney_top_aloo-bukhara
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_aloo-bukhara.jpg
+
+newmtl label_aloo-bukhara
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 150
+d 1
+map_Kd textures/label_aloo-bukhara.jpg
+
+newmtl pet_clear
+Kd 0.8963 0.9216 0.9047
+Ks 0.4 0.4 0.4
+Ns 288
+d 0.07
+
+newmtl cap_black
+Kd 0.0110 0.0103 0.0097
+Ks 0.4 0.4 0.4
+Ns 114
+d 1
+
+newmtl chutney_garlic
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_garlic.jpg
+
+newmtl chutney_top_garlic
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_garlic.jpg
+
+newmtl label_garlic
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 150
+d 1
+map_Kd textures/label_garlic.jpg
+
+newmtl chutney_green
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_green.jpg
+
+newmtl chutney_top_green
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_green.jpg
+
+newmtl label_green
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 150
+d 1
+map_Kd textures/label_green.jpg
+
+newmtl chutney_imli
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_imli.jpg
+
+newmtl chutney_top_imli
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_imli.jpg
+
+newmtl label_imli
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 150
+d 1
+map_Kd textures/label_imli.jpg
+
+newmtl chutney_khajoor
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_khajoor.jpg
+
+newmtl chutney_top_khajoor
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_khajoor.jpg
+
+newmtl label_khajoor
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 150
+d 1
+map_Kd textures/label_khajoor.jpg
+

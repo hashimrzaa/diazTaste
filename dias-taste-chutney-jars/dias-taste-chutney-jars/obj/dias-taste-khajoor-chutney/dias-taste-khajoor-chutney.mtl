@@ -1,0 +1,34 @@
+# Dia's Taste chutney jar
+newmtl chutney_khajoor
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_khajoor.jpg
+
+newmtl chutney_top_khajoor
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 120
+d 1
+map_Kd textures/chutney_khajoor.jpg
+
+newmtl label_khajoor
+Kd 1.0000 1.0000 1.0000
+Ks 0.4 0.4 0.4
+Ns 150
+d 1
+map_Kd textures/label_khajoor.jpg
+
+newmtl pet_clear
+Kd 0.8963 0.9216 0.9047
+Ks 0.4 0.4 0.4
+Ns 288
+d 0.07
+
+newmtl cap_black
+Kd 0.0110 0.0103 0.0097
+Ks 0.4 0.4 0.4
+Ns 114
+d 1
+
