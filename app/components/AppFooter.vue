@@ -111,7 +111,7 @@ onBeforeUnmount(() => ctx?.revert())
   font-size: var(--fs-d2);
 }
 .ftr__claim em {
-  color: #f0434a;
+  color: color-mix(in srgb, var(--chili) 62%, #fff);
 }
 .ftr__contact {
   display: flex;

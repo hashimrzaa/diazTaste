@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { products } from '~/data/products'
 
 const route = useRoute()
 const progress = useLoadProgress()
 const curtain = ref<HTMLElement>()
+
+/* Every "red" accent on the site (headings' em words, eyebrows, footer claim,
+   page curtain, splash panel) follows the flavour in focus: the product on a
+   product page, otherwise the hero's selected flavour. */
+const heroFlavour = useHeroFlavour()
+watch(() => route.params.slug, (slug) => {
+  const i = products.findIndex((p) => p.slug === slug)
+  if (i >= 0) heroFlavour.value = i
+}, { immediate: true })
+const accent = computed(() => products[heroFlavour.value]?.color ?? products[2]!.color)
+useHead({ htmlAttrs: { style: computed(() => `--chili: ${accent.value.accent}; --chili-deep: ${accent.value.deep}`) } })
 
 onMounted(async () => {
   initSmoothScroll()
@@ -106,6 +118,7 @@ const transition = {
   inset: 0;
   z-index: 150;
   background: var(--chili);
+  transition: background-color 0.4s;
 }
 .curtain__mark {
   position: absolute;

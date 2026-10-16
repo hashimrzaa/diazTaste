@@ -7,7 +7,7 @@ export const resetStageState = () => Object.assign(stageState, defaultState())
 
 export const useLoadProgress = () => useState('load-progress', () => 0)
 /** Flavour shown in the home hero (index into products). Set from the logo menu too. */
-export const useHeroFlavour = () => useState('hero-flavour', () => 0)
+export const useHeroFlavour = () => useState('hero-flavour', () => 2) // Aloo Bukhara by default
 export const useIntroDone = () => useState('intro-done', () => false)
 
 export interface ArState {

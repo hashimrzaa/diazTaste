@@ -25,7 +25,7 @@ export const defaultState = (): StageState => ({
   spin: 0,
   tilt: 0,
   cap: 0,
-  flavour: 0,
+  flavour: 2,
   lineup: 0,
   pan: 0,
   spread: 0,

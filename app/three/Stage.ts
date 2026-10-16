@@ -87,7 +87,8 @@ export class Stage {
 
   /** Loads the FIRST model (that is what the splash waits for), starts
    *  rendering, then streams the remaining models in the background in order. */
-  async load(onProgress?: (p: number) => void) {
+  async load(onProgress?: (p: number) => void, firstIndex = 0) {
+    const fi = Math.min(Math.max(0, firstIndex), this.models.length - 1)
     const draco = new DRACOLoader().setDecoderPath('/draco/')
     const loader = new GLTFLoader().setDRACOLoader(draco)
     const shadowTex = this.makeShadowTexture()
@@ -96,9 +97,9 @@ export class Stage {
         loader.load(url, (g) => resolve(g.scene), (e) => { if (e.total && report) report(Math.min(0.99, e.loaded / e.total)) }, reject),
       )
 
-    const first = await fetchOne(this.models[0]!.url, onProgress)
+    const first = await fetchOne(this.models[fi]!.url, onProgress)
     if (this.disposed) return
-    this.jars.push(this.prepareJar(first, shadowTex))
+    this.jars[fi] = this.prepareJar(first, shadowTex)
     this.ingredientSets = createIngredientSets(this.models.map((m) => m.slug))
     this.ingredientSets.forEach((s) => this.rig.add(s.group))
     this.renderer.compile(this.scene, this.camera)
@@ -106,11 +107,12 @@ export class Stage {
     this.renderer.setAnimationLoop(this.tick)
     onProgress?.(1)
 
-    for (const m of this.models.slice(1)) {
+    for (const [i, m] of this.models.entries()) {
+      if (i === fi) continue
       try {
         const g = await fetchOne(m.url)
         if (this.disposed) return
-        this.jars.push(this.prepareJar(g, shadowTex))
+        this.jars[i] = this.prepareJar(g, shadowTex)
       } catch (e) {
         console.warn('[stage] model failed', m.url, e)
         break
@@ -323,7 +325,7 @@ export class Stage {
     }
 
     // --- jars ---
-    const n = this.jars.length
+    const n = this.models.length
     this.jars.forEach((jar, i) => {
       const d = i - C.flavour
       const ad = Math.abs(d)

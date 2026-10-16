@@ -10,6 +10,7 @@ let stage: Stage | undefined
 
 const onResize = () => stage?.resize()
 
+const heroFlavour = useHeroFlavour()
 onMounted(async () => {
   const { Stage } = await import('~/three/Stage')
   stage = new Stage(
@@ -20,7 +21,7 @@ onMounted(async () => {
   stage.onHover = (i) => emit('hover', i)
   window.addEventListener('resize', onResize)
   try {
-    await stage.load((p) => (progress.value = Math.max(progress.value, p * 0.98)))
+    await stage.load((p) => (progress.value = Math.max(progress.value, p * 0.98)), props.only ? 0 : heroFlavour.value)
   } catch (e) {
     console.error('[stage] failed to load models', e)
   }
