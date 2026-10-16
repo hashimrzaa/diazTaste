@@ -23,3 +23,24 @@ export function openAr(slug = 'green') {
 
 export const isTouch = () => import.meta.client && window.matchMedia('(pointer: coarse)').matches
 export const isMobile = () => import.meta.client && window.matchMedia('(max-width: 768px)').matches
+
+/** True when the browser can create a WebGL context. Probed on a throwaway
+ *  canvas so a blocked GPU (hardware acceleration off, blocklisted driver)
+ *  never reaches three.js, which would otherwise throw and log errors. */
+let glProbe: boolean | undefined
+export function hasWebGL() {
+  if (!import.meta.client) return true
+  if (glProbe === undefined) {
+    try {
+      const c = document.createElement('canvas')
+      const gl = (c.getContext('webgl2') || c.getContext('webgl')) as WebGLRenderingContext | null
+      glProbe = !!gl
+      gl?.getExtension('WEBGL_lose_context')?.loseContext()
+    } catch {
+      glProbe = false
+    }
+  }
+  return glProbe
+}
+/** Set when the 3D stage could not start; pages swap in still images. */
+export const useNoWebGL = () => useState('no-webgl', () => false)

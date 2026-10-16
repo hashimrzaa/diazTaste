@@ -10187,22 +10187,22 @@ var virtual_nuxt__nuxt_build_2Froutes_default = [
 	{
 		name: "chutney-slug",
 		path: "/chutney/:slug()",
-		component: () => import('../build/_slug_-Li6FMeAz.mjs')
+		component: () => import('../build/_slug_-CdVla_LF.mjs')
 	},
 	{
 		name: "accessibility",
 		path: "/accessibility",
-		component: () => import('../build/accessibility-DSc4JcsN.mjs')
+		component: () => import('../build/accessibility-CypZpx2v.mjs')
 	},
 	{
 		name: "cookies",
 		path: "/cookies",
-		component: () => import('../build/cookies-BSIB3lyy.mjs')
+		component: () => import('../build/cookies-BcI4oBZP.mjs')
 	},
 	{
 		name: "flavours",
 		path: "/flavours",
-		component: () => import('../build/flavours-BIUh_fJx.mjs')
+		component: () => import('../build/flavours-TefTi3wa.mjs')
 	},
 	{
 		name: "menu",
@@ -10213,17 +10213,17 @@ var virtual_nuxt__nuxt_build_2Froutes_default = [
 	{
 		name: "privacy",
 		path: "/privacy",
-		component: () => import('../build/privacy-Bub-V7R3.mjs')
+		component: () => import('../build/privacy-BB1KSnEx.mjs')
 	},
 	{
 		name: "terms",
 		path: "/terms",
-		component: () => import('../build/terms-CzBgHjYW.mjs')
+		component: () => import('../build/terms-C8xXOOk5.mjs')
 	},
 	{
 		name: "index",
 		path: "/",
-		component: () => import('../build/pages-D560wMB1.mjs')
+		component: () => import('../build/pages-BvGcheAq.mjs')
 	}
 ];
 //#endregion
@@ -10756,6 +10756,8 @@ var useLoadProgress = () => useState("load-progress", () => 0);
 /** Flavour shown in the home hero (index into products). Set from the logo menu too. */
 var useHeroFlavour = () => useState("hero-flavour", () => 2);
 var useIntroDone = () => useState("intro-done", () => false);
+/** Set when the 3D stage could not start; pages swap in still images. */
+var useNoWebGL = () => useState("no-webgl", () => false);
 function scrollToTarget(target, offset = 0) {
 	const top = typeof target === "number" ? target : (typeof target === "string" ? (void 0).querySelector(target) : target).getBoundingClientRect().top + (void 0).scrollY + offset;
 	(void 0).scrollTo({
@@ -12038,5 +12040,5 @@ const entry = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
 	default: entry_default
 }, Symbol.toStringTag, { value: 'Module' }));
 
-export { AppIcon_default as A, ClientOnly as C, NuxtLink as N, WHATSAPP_TEL as W, _plugin_vue_export_helper_default as _, useSeoMeta as a, useHead as b, createError$2 as c, WHATSAPP_DISPLAY as d, WHATSAPP_URL as e, formatPrice as f, getProduct as g, useRuntimeConfig as h, useIntroDone as i, useLoadProgress as j, useHeroFlavour as k, gsapWithCSS as l, entry as m, products as p, stageState as s, useRoute$1 as u };
+export { AppIcon_default as A, ClientOnly as C, NuxtLink as N, WHATSAPP_TEL as W, _plugin_vue_export_helper_default as _, useSeoMeta as a, useHead as b, createError$2 as c, WHATSAPP_DISPLAY as d, WHATSAPP_URL as e, formatPrice as f, getProduct as g, useRuntimeConfig as h, useIntroDone as i, useLoadProgress as j, useHeroFlavour as k, useNoWebGL as l, gsapWithCSS as m, entry as n, products as p, stageState as s, useRoute$1 as u };
 //# sourceMappingURL=entry.mjs.map

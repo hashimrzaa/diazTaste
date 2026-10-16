@@ -35,5 +35,5 @@ export { setInterval } from '#app/compat/interval';
 export { definePageMeta, PageMeta } from '#app/composables/pages';
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
 export { loadModelViewer, absoluteUrl } from '../app/composables/useModelViewer';
-export { stageState, resetStageState, useLoadProgress, useHeroFlavour, useIntroDone, useAr, openAr, isTouch, isMobile, ArState } from '../app/composables/useSite';
+export { stageState, resetStageState, useLoadProgress, useHeroFlavour, useIntroDone, useAr, openAr, isTouch, isMobile, hasWebGL, useNoWebGL, ArState } from '../app/composables/useSite';
 export { prefersReducedMotion, initSmoothScroll, getLenis, scrollToTarget, lockScroll } from '../app/composables/useSmoothScroll';

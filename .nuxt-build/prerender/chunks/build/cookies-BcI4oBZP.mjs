@@ -1,5 +1,5 @@
 import { _ as _plugin_vue_export_helper_default } from '../virtual/entry.mjs';
-import { L as LegalPage_default } from './LegalPage-BxI9VJoD.mjs';
+import { L as LegalPage_default } from './LegalPage-C-qdqAx1.mjs';
 import { mergeProps, withCtx, createVNode, createTextVNode, useSSRContext } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/index.mjs';
 import { ssrRenderComponent } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/server-renderer/index.mjs';
 import 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/nostics/dist/index.mjs';
@@ -64,4 +64,4 @@ _sfc_main.setup = (props, ctx) => {
 var cookies_default = /* @__PURE__ */ _plugin_vue_export_helper_default(_sfc_main, [["ssrRender", _sfc_ssrRender]]);
 
 export { cookies_default as default };
-//# sourceMappingURL=cookies-BSIB3lyy.mjs.map
+//# sourceMappingURL=cookies-BcI4oBZP.mjs.map

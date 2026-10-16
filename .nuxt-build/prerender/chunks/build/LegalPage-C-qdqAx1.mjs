@@ -39,4 +39,4 @@ LegalPage_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
 var LegalPage_default = /* @__PURE__ */ Object.assign(_plugin_vue_export_helper_default(LegalPage_vue_vue_type_script_setup_true_lang_default, [["__scopeId", "data-v-8ef51650"]]), { __name: "LegalPage" });
 
 export { LegalPage_default as L };
-//# sourceMappingURL=LegalPage-BxI9VJoD.mjs.map
+//# sourceMappingURL=LegalPage-C-qdqAx1.mjs.map

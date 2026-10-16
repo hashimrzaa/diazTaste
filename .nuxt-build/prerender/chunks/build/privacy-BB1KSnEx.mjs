@@ -1,5 +1,5 @@
 import { e as WHATSAPP_URL } from '../virtual/entry.mjs';
-import { L as LegalPage_default } from './LegalPage-BxI9VJoD.mjs';
+import { L as LegalPage_default } from './LegalPage-C-qdqAx1.mjs';
 import { defineComponent, mergeProps, withCtx, unref, createVNode, createTextVNode, useSSRContext } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/index.mjs';
 import { ssrRenderComponent, ssrRenderAttr } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/server-renderer/index.mjs';
 import 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/nostics/dist/index.mjs';
@@ -98,4 +98,4 @@ privacy_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
 var privacy_default = privacy_vue_vue_type_script_setup_true_lang_default;
 
 export { privacy_default as default };
-//# sourceMappingURL=privacy-Bub-V7R3.mjs.map
+//# sourceMappingURL=privacy-BB1KSnEx.mjs.map

@@ -34,7 +34,7 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/icon-192.png' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         { rel: 'manifest', href: '/site.webmanifest' },
-        { rel: 'preload', href: '/models/green.hero.glb', as: 'fetch', crossorigin: 'anonymous' },
+        { rel: 'preload', href: '/models/aloo-bukhara.hero.glb', as: 'fetch', crossorigin: 'anonymous' },
       ],
     },
   },

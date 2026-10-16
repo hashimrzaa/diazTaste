@@ -50,4 +50,4 @@ TasteMeter_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
 var TasteMeter_default = /* @__PURE__ */ Object.assign(_plugin_vue_export_helper_default(TasteMeter_vue_vue_type_script_setup_true_lang_default, [["__scopeId", "data-v-8511511b"]]), { __name: "TasteMeter" });
 
 export { TasteMeter_default as T };
-//# sourceMappingURL=TasteMeter-Cia0CdKk.mjs.map
+//# sourceMappingURL=TasteMeter-BHzuA2QM.mjs.map

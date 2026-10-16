@@ -1,7 +1,7 @@
-import { a as useSeoMeta, b as useHead, e as WHATSAPP_URL, p as products, C as ClientOnly, h as useRuntimeConfig, _ as _plugin_vue_export_helper_default, i as useIntroDone, j as useLoadProgress, k as useHeroFlavour, l as gsapWithCSS, s as stageState, N as NuxtLink, A as AppIcon_default } from '../virtual/entry.mjs';
-import { O as OrderBlock_default } from './OrderBlock-Bi1p8zqv.mjs';
+import { a as useSeoMeta, b as useHead, e as WHATSAPP_URL, p as products, C as ClientOnly, h as useRuntimeConfig, _ as _plugin_vue_export_helper_default, i as useIntroDone, j as useLoadProgress, k as useHeroFlavour, l as useNoWebGL, m as gsapWithCSS, s as stageState, N as NuxtLink, A as AppIcon_default } from '../virtual/entry.mjs';
+import { O as OrderBlock_default } from './OrderBlock-BgafvB_J.mjs';
 import { defineComponent, mergeProps, ref, computed, watch, unref, withCtx, createVNode, openBlock, createBlock, Fragment, renderList, toDisplayString, useSSRContext } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/index.mjs';
-import { ssrRenderAttrs, ssrRenderComponent, ssrRenderList, ssrRenderStyle, ssrInterpolate, ssrRenderClass, ssrRenderAttr } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/server-renderer/index.mjs';
+import { ssrRenderAttrs, ssrRenderComponent, ssrRenderAttr, ssrRenderList, ssrRenderStyle, ssrInterpolate, ssrRenderClass } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/server-renderer/index.mjs';
 import 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/nostics/dist/index.mjs';
 import 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/nostics/dist/formatters/ansi.mjs';
 import 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/hookable/dist/index.mjs';
@@ -42,6 +42,7 @@ var HeroSection_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ de
     useIntroDone();
     useLoadProgress();
     const active = useHeroFlavour();
+    const noWebGL = useNoWebGL();
     const p = computed(() => products[active.value]);
     const callouts = computed(() => p.value.ingredients.slice(0, 4).map((k, i) => ({
       k: k.replace(/\s*\(.*?\)/g, ""),
@@ -73,23 +74,26 @@ var HeroSection_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ de
         id: "top",
         ref_key: "root",
         ref: root,
-        class: "hx",
+        class: ["hx", { nogl: unref(noWebGL) }],
         style: {
           "--a": unref(p).color.accent,
           "--d": unref(p).color.deep,
           "--t": unref(p).color.tint
         },
         "aria-labelledby": "hx-title"
-      }, _attrs))} data-v-2bca9707><div class="hx__back" data-v-2bca9707><div class="hx__disc" aria-hidden="true" data-v-2bca9707><span class="hx__glow" data-v-2bca9707></span></div></div><div class="hx__front" data-v-2bca9707><h1 id="hx-title" class="sr-only" data-v-2bca9707>Dia\u2019s Taste \u2014 homemade chutneys</h1><div class="hx__row" data-v-2bca9707><div class="hx__col hx__col--l" data-v-2bca9707><div class="hx__stack" data-v-2bca9707><span class="hx__w display" aria-hidden="true" data-v-2bca9707>Dia\u2019s</span><div class="hx__copy hx__reveal" data-v-2bca9707><p class="hx__lead" data-v-2bca9707>Five chutneys cooked the way Ammi always made them \u2014 real fruit, fresh herbs, nothing added.</p><dl class="hx__stats" data-v-2bca9707><div data-v-2bca9707><dt data-v-2bca9707>Homemade</dt><dd class="display" data-v-2bca9707>100%</dd></div><div data-v-2bca9707><dt data-v-2bca9707>Additives</dt><dd class="display" data-v-2bca9707>0</dd></div><div data-v-2bca9707><dt data-v-2bca9707>Per jar</dt><dd class="display" data-v-2bca9707>500g</dd></div></dl></div></div></div><div class="hx__gap" data-v-2bca9707></div><div class="hx__col hx__col--r" data-v-2bca9707><div class="hx__stack" data-v-2bca9707><span class="hx__w hx__w--red display" aria-hidden="true" data-v-2bca9707>Taste</span>`);
+      }, _attrs))} data-v-6d962c63><div class="hx__back" data-v-6d962c63><div class="hx__disc" aria-hidden="true" data-v-6d962c63><span class="hx__glow" data-v-6d962c63></span></div>`);
+      if (unref(noWebGL)) _push(`<img${ssrRenderAttr("src", unref(p).image)}${ssrRenderAttr("alt", `${unref(p).name} jar`)} class="hx__still" width="400" height="530" data-v-6d962c63>`);
+      else _push(`<!---->`);
+      _push(`</div><div class="hx__front" data-v-6d962c63><h1 id="hx-title" class="sr-only" data-v-6d962c63>Dia\u2019s Taste \u2014 homemade chutneys</h1><div class="hx__row" data-v-6d962c63><div class="hx__col hx__col--l" data-v-6d962c63><div class="hx__stack" data-v-6d962c63><span class="hx__w display" aria-hidden="true" data-v-6d962c63>Dia\u2019s</span><div class="hx__copy hx__reveal" data-v-6d962c63><p class="hx__lead" data-v-6d962c63>Five chutneys cooked the way Ammi always made them \u2014 real fruit, fresh herbs, nothing added.</p><dl class="hx__stats" data-v-6d962c63><div data-v-6d962c63><dt data-v-6d962c63>Homemade</dt><dd class="display" data-v-6d962c63>100%</dd></div><div data-v-6d962c63><dt data-v-6d962c63>Additives</dt><dd class="display" data-v-6d962c63>0</dd></div><div data-v-6d962c63><dt data-v-6d962c63>Per jar</dt><dd class="display" data-v-6d962c63>500g</dd></div></dl></div></div></div><div class="hx__gap" data-v-6d962c63></div><div class="hx__col hx__col--r" data-v-6d962c63><div class="hx__stack" data-v-6d962c63><span class="hx__w hx__w--red display" aria-hidden="true" data-v-6d962c63>Taste</span>`);
       _push(ssrRenderComponent(_component_NuxtLink, {
         to: `/chutney/${unref(p).slug}`,
         class: "hx__fname hx__reveal"
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<span class="hx__fname-in display" data-v-2bca9707${_scopeId}><!--[-->`);
+            _push2(`<span class="hx__fname-in display" data-v-6d962c63${_scopeId}><!--[-->`);
             ssrRenderList(unref(p).name, (ch, ci) => {
-              _push2(`<span class="hx__fl" style="${ssrRenderStyle({ "--i": ci })}" data-v-2bca9707${_scopeId}>${ssrInterpolate(ch === " " ? "\xA0" : ch)}</span>`);
+              _push2(`<span class="hx__fl" style="${ssrRenderStyle({ "--i": ci })}" data-v-6d962c63${_scopeId}>${ssrInterpolate(ch === " " ? "\xA0" : ch)}</span>`);
             });
             _push2(`<!--]--></span>`);
             _push2(ssrRenderComponent(_component_AppIcon, { name: "arrow" }, null, _parent2, _scopeId));
@@ -103,25 +107,25 @@ var HeroSection_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ de
         }),
         _: 1
       }, _parent));
-      _push(`</div></div></div><div class="hx__notes hx__reveal" aria-hidden="true" data-v-2bca9707><div class="hx__note n-heat" data-v-2bca9707><span class="hx__nt" data-v-2bca9707><span class="hx__nk" data-v-2bca9707>Heat</span><span class="hx__dots" data-v-2bca9707><!--[-->`);
+      _push(`</div></div></div><div class="hx__notes hx__reveal" aria-hidden="true" data-v-6d962c63><div class="hx__note n-heat" data-v-6d962c63><span class="hx__nt" data-v-6d962c63><span class="hx__nk" data-v-6d962c63>Heat</span><span class="hx__dots" data-v-6d962c63><!--[-->`);
       ssrRenderList(5, (n) => {
-        _push(`<i class="${ssrRenderClass({ on: n <= unref(p).taste.heat })}" data-v-2bca9707></i>`);
+        _push(`<i class="${ssrRenderClass({ on: n <= unref(p).taste.heat })}" data-v-6d962c63></i>`);
       });
-      _push(`<!--]--></span></span><svg class="hx__arr" viewBox="0 0 120 50" aria-hidden="true" data-v-2bca9707><path d="M2 8 H44 L112 44" data-v-2bca9707></path><path class="hx__ah" d="M100 44 L113 45 L107 33" data-v-2bca9707></path></svg></div><div class="hx__note n-sweet" data-v-2bca9707><span class="hx__nt" data-v-2bca9707><span class="hx__nk" data-v-2bca9707>Sweet</span><span class="hx__dots" data-v-2bca9707><!--[-->`);
+      _push(`<!--]--></span></span><svg class="hx__arr" viewBox="0 0 120 50" aria-hidden="true" data-v-6d962c63><path d="M2 8 H44 L112 44" data-v-6d962c63></path><path class="hx__ah" d="M100 44 L113 45 L107 33" data-v-6d962c63></path></svg></div><div class="hx__note n-sweet" data-v-6d962c63><span class="hx__nt" data-v-6d962c63><span class="hx__nk" data-v-6d962c63>Sweet</span><span class="hx__dots" data-v-6d962c63><!--[-->`);
       ssrRenderList(5, (n) => {
-        _push(`<i class="${ssrRenderClass({ on: n <= unref(p).taste.sweet })}" data-v-2bca9707></i>`);
+        _push(`<i class="${ssrRenderClass({ on: n <= unref(p).taste.sweet })}" data-v-6d962c63></i>`);
       });
-      _push(`<!--]--></span></span><svg class="hx__arr" viewBox="0 0 120 50" aria-hidden="true" data-v-2bca9707><path d="M2 8 H44 L112 44" data-v-2bca9707></path><path class="hx__ah" d="M100 44 L113 45 L107 33" data-v-2bca9707></path></svg></div><div class="hx__note n-tangy" data-v-2bca9707><span class="hx__nt" data-v-2bca9707><span class="hx__nk" data-v-2bca9707>Tangy</span><span class="hx__dots" data-v-2bca9707><!--[-->`);
+      _push(`<!--]--></span></span><svg class="hx__arr" viewBox="0 0 120 50" aria-hidden="true" data-v-6d962c63><path d="M2 8 H44 L112 44" data-v-6d962c63></path><path class="hx__ah" d="M100 44 L113 45 L107 33" data-v-6d962c63></path></svg></div><div class="hx__note n-tangy" data-v-6d962c63><span class="hx__nt" data-v-6d962c63><span class="hx__nk" data-v-6d962c63>Tangy</span><span class="hx__dots" data-v-6d962c63><!--[-->`);
       ssrRenderList(5, (n) => {
-        _push(`<i class="${ssrRenderClass({ on: n <= unref(p).taste.tangy })}" data-v-2bca9707></i>`);
+        _push(`<i class="${ssrRenderClass({ on: n <= unref(p).taste.tangy })}" data-v-6d962c63></i>`);
       });
-      _push(`<!--]--></span></span><svg class="hx__arr" viewBox="0 0 120 50" aria-hidden="true" data-v-2bca9707><path d="M2 8 H44 L112 44" data-v-2bca9707></path><path class="hx__ah" d="M100 44 L113 45 L107 33" data-v-2bca9707></path></svg></div></div><p class="hx__mtitle display hx__reveal" aria-hidden="true" data-v-2bca9707>Dia\u2019s <span data-v-2bca9707>Taste</span></p><div class="hx__recipe hx__reveal" data-v-2bca9707><span class="hx__rk eyebrow" data-v-2bca9707>Quick recipe</span><strong class="display" data-v-2bca9707>${ssrInterpolate(unref(p).recipe.title)}</strong><ol data-v-2bca9707><!--[-->`);
+      _push(`<!--]--></span></span><svg class="hx__arr" viewBox="0 0 120 50" aria-hidden="true" data-v-6d962c63><path d="M2 8 H44 L112 44" data-v-6d962c63></path><path class="hx__ah" d="M100 44 L113 45 L107 33" data-v-6d962c63></path></svg></div></div><p class="hx__mtitle display hx__reveal" aria-hidden="true" data-v-6d962c63>Dia\u2019s <span data-v-6d962c63>Taste</span></p><div class="hx__recipe hx__reveal" data-v-6d962c63><span class="hx__rk eyebrow" data-v-6d962c63>Quick recipe</span><strong class="display" data-v-6d962c63>${ssrInterpolate(unref(p).recipe.title)}</strong><ol data-v-6d962c63><!--[-->`);
       ssrRenderList(unref(p).recipe.steps, (st, si) => {
-        _push(`<li data-v-2bca9707>${ssrInterpolate(st)}</li>`);
+        _push(`<li data-v-6d962c63>${ssrInterpolate(st)}</li>`);
       });
-      _push(`<!--]--></ol></div><div class="hx__mcopy hx__reveal" data-v-2bca9707><p data-v-2bca9707>Five chutneys cooked the way Ammi always made them \u2014 real fruit, fresh herbs, nothing added.</p><dl class="hx__mstats" data-v-2bca9707><div data-v-2bca9707><dd class="display" data-v-2bca9707>100%</dd><dt data-v-2bca9707>Homemade</dt></div><div data-v-2bca9707><dd class="display" data-v-2bca9707>0</dd><dt data-v-2bca9707>Additives</dt></div><div data-v-2bca9707><dd class="display" data-v-2bca9707>500g</dd><dt data-v-2bca9707>Per jar</dt></div></dl></div><div class="hx__hot" aria-hidden="true" data-v-2bca9707></div><!--[-->`);
+      _push(`<!--]--></ol></div><div class="hx__mcopy hx__reveal" data-v-6d962c63><p data-v-6d962c63>Five chutneys cooked the way Ammi always made them \u2014 real fruit, fresh herbs, nothing added.</p><dl class="hx__mstats" data-v-6d962c63><div data-v-6d962c63><dd class="display" data-v-6d962c63>100%</dd><dt data-v-6d962c63>Homemade</dt></div><div data-v-6d962c63><dd class="display" data-v-6d962c63>0</dd><dt data-v-6d962c63>Additives</dt></div><div data-v-6d962c63><dd class="display" data-v-6d962c63>500g</dd><dt data-v-6d962c63>Per jar</dt></div></dl></div><div class="hx__hot" aria-hidden="true" data-v-6d962c63></div><!--[-->`);
       ssrRenderList(unref(callouts), (c) => {
-        _push(`<div class="${ssrRenderClass([`p-${c.pos}`, "hx__callout"])}" aria-hidden="true" data-v-2bca9707><span class="hx__ck display" data-v-2bca9707>${ssrInterpolate(c.k)}</span><svg class="hx__arr" viewBox="0 0 120 50" aria-hidden="true" data-v-2bca9707><path d="M2 8 H44 L112 44" data-v-2bca9707></path><path class="hx__ah" d="M100 44 L113 45 L107 33" data-v-2bca9707></path></svg></div>`);
+        _push(`<div class="${ssrRenderClass([`p-${c.pos}`, "hx__callout"])}" aria-hidden="true" data-v-6d962c63><span class="hx__ck display" data-v-6d962c63>${ssrInterpolate(c.k)}</span><svg class="hx__arr" viewBox="0 0 120 50" aria-hidden="true" data-v-6d962c63><path d="M2 8 H44 L112 44" data-v-6d962c63></path><path class="hx__ah" d="M100 44 L113 45 L107 33" data-v-6d962c63></path></svg></div>`);
       });
       _push(`<!--]--></div></section>`);
     };
@@ -133,7 +137,7 @@ HeroSection_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => 
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/home/HeroSection.vue");
   return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
 };
-var HeroSection_default = /* @__PURE__ */ Object.assign(_plugin_vue_export_helper_default(HeroSection_vue_vue_type_script_setup_true_lang_default, [["__scopeId", "data-v-2bca9707"]]), { __name: "HomeHeroSection" });
+var HeroSection_default = /* @__PURE__ */ Object.assign(_plugin_vue_export_helper_default(HeroSection_vue_vue_type_script_setup_true_lang_default, [["__scopeId", "data-v-6d962c63"]]), { __name: "HomeHeroSection" });
 var OrderSection_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   __name: "OrderSection",
   __ssrInlineRender: true,
@@ -257,4 +261,4 @@ index_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
 var pages_default = index_vue_vue_type_script_setup_true_lang_default;
 
 export { pages_default as default };
-//# sourceMappingURL=pages-D560wMB1.mjs.map
+//# sourceMappingURL=pages-BvGcheAq.mjs.map

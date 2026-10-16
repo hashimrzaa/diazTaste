@@ -13,6 +13,7 @@ const root = ref<HTMLElement>()
 const introDone = useIntroDone()
 const progress = useLoadProgress()
 const active = useHeroFlavour()
+const noWebGL = useNoWebGL()
 const p = computed(() => products[active.value]!)
 const callouts = computed(() => p.value.ingredients.slice(0, 4).map((k, i) => ({ k: k.replace(/\s*\(.*?\)/g, ''), pos: ['tl', 'tr', 'bl', 'br'][i]! })))
 let ctx: gsap.Context | undefined
@@ -94,8 +95,11 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
 </script>
 
 <template>
-  <section id="top" ref="root" class="hx" :style="{ '--a': p.color.accent, '--d': p.color.deep, '--t': p.color.tint }" aria-labelledby="hx-title">
-    <div class="hx__back"><div class="hx__disc" aria-hidden="true"><span class="hx__glow" /></div></div>
+  <section id="top" ref="root" class="hx" :class="{ nogl: noWebGL }" :style="{ '--a': p.color.accent, '--d': p.color.deep, '--t': p.color.tint }" aria-labelledby="hx-title">
+    <div class="hx__back">
+      <div class="hx__disc" aria-hidden="true"><span class="hx__glow" /></div>
+      <img v-if="noWebGL" :key="p.slug" :src="p.image" :alt="`${p.name} jar`" class="hx__still" width="400" height="530" />
+    </div>
 
     <div class="hx__front">
       <h1 id="hx-title" class="sr-only">Dia’s Taste — homemade chutneys</h1>
@@ -166,6 +170,10 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
   background: radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 45%, color-mix(in srgb, var(--a) 35%, var(--t)) 100%);
   box-shadow: 0 40px 90px -50px color-mix(in srgb, var(--a) 70%, transparent); transition: background 0.8s var(--ease-out), box-shadow 0.8s; }
 .hx__glow { position: absolute; left: 30%; top: 25%; width: 70%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, 0.7), transparent 70%); animation: glow 8s ease-in-out infinite alternate; }
+/* no WebGL: a still photo of the jar stands in for the 3D one */
+.hx.nogl { --jar-h: calc(var(--D) * 0.8); --jar-x: 50%; --jar-y: 52%; }
+.hx__still { position: absolute; left: var(--jar-x); top: var(--jar-y); height: calc(var(--jar-h) * 1.08); width: auto; translate: -50% -50%; object-fit: contain; filter: drop-shadow(0 30px 30px rgba(30, 15, 10, 0.25)); animation: still-in 0.8s var(--ease-out); }
+@keyframes still-in { from { opacity: 0; transform: translateY(20px); } }
 @keyframes glow { to { left: 62%; top: 40%; } }
 
 /* one straight line; each word fills its side, copy sits under it at the word's width */
@@ -234,6 +242,7 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
   .hx { --D: min(38vh, 78vw); }
   .hx__row, .hx__notes { display: none; }
   .hx__hot { top: var(--jar-y, 57%); }
+  .hx.nogl { --jar-y: 57%; --jar-h: calc(var(--D) * 0.86); }
   .hx__mtitle { display: block; position: absolute; left: 0; right: 0; top: 92px; text-align: center; font-size: clamp(2.2rem, 11vw, 3rem); font-weight: 800; letter-spacing: -0.04em; }
   .hx__mtitle span { color: var(--a); transition: color 0.6s; }
   .hx__recipe { display: grid; gap: 4px; position: absolute; left: var(--gutter); right: var(--gutter); top: 150px; padding: 12px 16px; border-radius: 18px; background: #fff; box-shadow: 0 16px 36px -24px rgba(30, 15, 10, 0.4), inset 0 0 0 1px var(--line); border-left: 5px solid var(--a); }

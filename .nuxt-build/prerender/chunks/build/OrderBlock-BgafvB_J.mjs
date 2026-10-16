@@ -59,4 +59,4 @@ OrderBlock_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
 var OrderBlock_default = /* @__PURE__ */ Object.assign(_plugin_vue_export_helper_default(OrderBlock_vue_vue_type_script_setup_true_lang_default, [["__scopeId", "data-v-3d30d1ee"]]), { __name: "OrderBlock" });
 
 export { OrderBlock_default as O };
-//# sourceMappingURL=OrderBlock-Bi1p8zqv.mjs.map
+//# sourceMappingURL=OrderBlock-BgafvB_J.mjs.map

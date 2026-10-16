@@ -11,13 +11,24 @@ let stage: Stage | undefined
 const onResize = () => stage?.resize()
 
 const heroFlavour = useHeroFlavour()
+const noWebGL = useNoWebGL()
 onMounted(async () => {
+  const fail = (e?: unknown) => {
+    if (e) console.warn('[stage] 3D unavailable, showing images instead', e)
+    noWebGL.value = true
+    progress.value = 1
+  }
+  if (!hasWebGL()) return fail()
   const { Stage } = await import('~/three/Stage')
-  stage = new Stage(
-    canvas.value!,
-    products.filter((p) => !props.only || props.only.includes(p.slug)).map((p) => ({ slug: p.slug, url: props.urls?.[p.slug] ?? p.model })),
-    stageState,
-  )
+  try {
+    stage = new Stage(
+      canvas.value!,
+      products.filter((p) => !props.only || props.only.includes(p.slug)).map((p) => ({ slug: p.slug, url: props.urls?.[p.slug] ?? p.model })),
+      stageState,
+    )
+  } catch (e) {
+    return fail(e)
+  }
   stage.onHover = (i) => emit('hover', i)
   window.addEventListener('resize', onResize)
   try {

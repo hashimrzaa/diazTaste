@@ -1,5 +1,5 @@
 import { _ as _plugin_vue_export_helper_default, u as useRoute$1, g as getProduct, c as createError$2, p as products, a as useSeoMeta, b as useHead, A as AppIcon_default, N as NuxtLink, f as formatPrice, W as WHATSAPP_TEL, d as WHATSAPP_DISPLAY, e as WHATSAPP_URL, h as useRuntimeConfig } from '../virtual/entry.mjs';
-import { T as TasteMeter_default } from './TasteMeter-Cia0CdKk.mjs';
+import { T as TasteMeter_default } from './TasteMeter-BHzuA2QM.mjs';
 import { defineComponent, computed, ref, watch, mergeProps, unref, withCtx, createTextVNode, createVNode, toDisplayString, useSSRContext } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/index.mjs';
 import { ssrRenderAttrs, ssrRenderAttr, ssrRenderStyle, ssrRenderClass, ssrRenderComponent, ssrInterpolate, ssrRenderList } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/server-renderer/index.mjs';
 import 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/nostics/dist/index.mjs';
@@ -88,6 +88,7 @@ var _slug__vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
     ref();
     const ready = ref(false);
     const canAR = ref(false);
+    const gl = ref(true);
     ref(0);
     const root = ref();
     watch(() => p.value.slug, () => {
@@ -108,21 +109,23 @@ var _slug__vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
           "--d": unref(p).color.deep,
           "--accent": unref(p).color.accent
         }
-      }, _attrs))} data-v-d1fc4397><div class="container pd__grid" data-v-d1fc4397><div class="pd__media-wrap" data-v-d1fc4397><div class="pd__media" data-v-d1fc4397><img${ssrRenderAttr("src", unref(p).image)}${ssrRenderAttr("alt", `${unref(p).name} \u2014 500 g jar`)} class="pd__photo" width="400" height="530" fetchpriority="high" style="${ssrRenderStyle(unref(view) === "photo" ? null : { display: "none" })}" data-v-d1fc4397><div class="pd__three" style="${ssrRenderStyle(unref(view) === "3d" ? null : { display: "none" })}" data-v-d1fc4397>`);
-      if (unref(ready)) _push(`<model-viewer class="pd__mv"${ssrRenderAttr("src", unref(p).model)}${ssrRenderAttr("alt", `3D view of the ${unref(p).name} jar. Drag to turn it.`)} camera-controls disable-zoom disable-pan touch-action="pan-y" interaction-prompt="none" shadow-intensity="1" shadow-softness="0.9" exposure="0.95" environment-image="neutral" camera-orbit="0deg 80deg 0.62m" min-camera-orbit="auto 60deg 0.62m" max-camera-orbit="auto 100deg 0.62m" field-of-view="26deg" loading="eager" ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto" ar-placement="floor" data-v-d1fc4397><span slot="ar-button" hidden data-v-d1fc4397></span><div slot="progress-bar" data-v-d1fc4397></div></model-viewer>`);
-      else _push(`<div class="pd__spinner" aria-hidden="true" data-v-d1fc4397></div>`);
-      _push(`</div><div class="pd__tabs" role="tablist" aria-label="View" data-v-d1fc4397><button role="tab"${ssrRenderAttr("aria-selected", unref(view) === "photo")} class="${ssrRenderClass({ on: unref(view) === "photo" })}" data-v-d1fc4397>Photo</button><button role="tab"${ssrRenderAttr("aria-selected", unref(view) === "3d")} class="${ssrRenderClass({ on: unref(view) === "3d" })}" data-v-d1fc4397>3D view</button></div>`);
+      }, _attrs))} data-v-2567102c><div class="container pd__grid" data-v-2567102c><div class="pd__media-wrap" data-v-2567102c><div class="pd__media" data-v-2567102c><img${ssrRenderAttr("src", unref(p).image)}${ssrRenderAttr("alt", `${unref(p).name} \u2014 500 g jar`)} class="pd__photo" width="400" height="530" fetchpriority="high" style="${ssrRenderStyle(unref(view) === "photo" ? null : { display: "none" })}" data-v-2567102c><div class="pd__three" style="${ssrRenderStyle(unref(view) === "3d" ? null : { display: "none" })}" data-v-2567102c>`);
+      if (unref(ready)) _push(`<model-viewer class="pd__mv"${ssrRenderAttr("src", unref(p).model)}${ssrRenderAttr("alt", `3D view of the ${unref(p).name} jar. Drag to turn it.`)} camera-controls disable-zoom disable-pan touch-action="pan-y" interaction-prompt="none" shadow-intensity="1" shadow-softness="0.9" exposure="0.95" environment-image="neutral" camera-orbit="0deg 80deg 0.62m" min-camera-orbit="auto 60deg 0.62m" max-camera-orbit="auto 100deg 0.62m" field-of-view="26deg" loading="eager" ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto" ar-placement="floor" data-v-2567102c><span slot="ar-button" hidden data-v-2567102c></span><div slot="progress-bar" data-v-2567102c></div></model-viewer>`);
+      else _push(`<div class="pd__spinner" aria-hidden="true" data-v-2567102c></div>`);
+      _push(`</div>`);
+      if (unref(gl)) _push(`<div class="pd__tabs" role="tablist" aria-label="View" data-v-2567102c><button role="tab"${ssrRenderAttr("aria-selected", unref(view) === "photo")} class="${ssrRenderClass({ on: unref(view) === "photo" })}" data-v-2567102c>Photo</button><button role="tab"${ssrRenderAttr("aria-selected", unref(view) === "3d")} class="${ssrRenderClass({ on: unref(view) === "3d" })}" data-v-2567102c>3D view</button></div>`);
+      else _push(`<!---->`);
       if (unref(view) === "3d") {
-        _push(`<p class="pd__hint" data-v-d1fc4397>`);
+        _push(`<p class="pd__hint" data-v-2567102c>`);
         _push(ssrRenderComponent(_component_AppIcon, { name: "rotate" }, null, _parent));
         _push(` Drag to turn</p>`);
       } else _push(`<!---->`);
       if (unref(view) === "3d" && unref(canAR)) {
-        _push(`<button class="btn pd__ar" data-v-d1fc4397>`);
+        _push(`<button class="btn pd__ar" data-v-2567102c>`);
         _push(ssrRenderComponent(_component_AppIcon, { name: "cube" }, null, _parent));
         _push(` View in your space</button>`);
       } else _push(`<!---->`);
-      _push(`</div></div><article class="pd__info" data-v-d1fc4397><nav class="pd__crumbs pd__anim" aria-label="Breadcrumb" data-v-d1fc4397>`);
+      _push(`</div></div><article class="pd__info" data-v-2567102c><nav class="pd__crumbs pd__anim" aria-label="Breadcrumb" data-v-2567102c>`);
       _push(ssrRenderComponent(_component_NuxtLink, { to: "/" }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) _push2(`Home`);
@@ -130,7 +133,7 @@ var _slug__vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
         }),
         _: 1
       }, _parent));
-      _push(`<span aria-hidden="true" data-v-d1fc4397>/</span>`);
+      _push(`<span aria-hidden="true" data-v-2567102c>/</span>`);
       _push(ssrRenderComponent(_component_NuxtLink, { to: "/flavours" }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) _push2(`Flavours`);
@@ -138,27 +141,27 @@ var _slug__vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
         }),
         _: 1
       }, _parent));
-      _push(`<span aria-hidden="true" data-v-d1fc4397>/</span><span aria-current="page" data-v-d1fc4397>${ssrInterpolate(unref(p).short)}</span></nav><p class="eyebrow pd__eyebrow pd__anim" data-v-d1fc4397>${ssrInterpolate(unref(p).urdu)} \xB7 ${ssrInterpolate(unref(p).weight)}</p><h1 class="pd__name display pd__anim" data-v-d1fc4397>${ssrInterpolate(unref(p).name)}</h1><p class="pd__tag display pd__anim" data-v-d1fc4397>${ssrInterpolate(unref(p).tagline)}</p><div class="pd__buy pd__anim" data-v-d1fc4397><div data-v-d1fc4397><p class="pd__price" data-v-d1fc4397>${ssrInterpolate(unref(formatPrice)(unref(p)))}</p><a${ssrRenderAttr("href", unref(WHATSAPP_TEL))} target="_blank" rel="noopener" class="pd__num" data-v-d1fc4397>`);
+      _push(`<span aria-hidden="true" data-v-2567102c>/</span><span aria-current="page" data-v-2567102c>${ssrInterpolate(unref(p).short)}</span></nav><p class="eyebrow pd__eyebrow pd__anim" data-v-2567102c>${ssrInterpolate(unref(p).urdu)} \xB7 ${ssrInterpolate(unref(p).weight)}</p><h1 class="pd__name display pd__anim" data-v-2567102c>${ssrInterpolate(unref(p).name)}</h1><p class="pd__tag display pd__anim" data-v-2567102c>${ssrInterpolate(unref(p).tagline)}</p><div class="pd__buy pd__anim" data-v-2567102c><div data-v-2567102c><p class="pd__price" data-v-2567102c>${ssrInterpolate(unref(formatPrice)(unref(p)))}</p><a${ssrRenderAttr("href", unref(WHATSAPP_TEL))} target="_blank" rel="noopener" class="pd__num" data-v-2567102c>`);
       _push(ssrRenderComponent(_component_AppIcon, { name: "whatsapp" }, null, _parent));
-      _push(` ${ssrInterpolate(unref(WHATSAPP_DISPLAY))}</a></div><a${ssrRenderAttr("href", unref(WHATSAPP_URL))} target="_blank" rel="noopener" class="btn btn--wa" data-v-d1fc4397>`);
+      _push(` ${ssrInterpolate(unref(WHATSAPP_DISPLAY))}</a></div><a${ssrRenderAttr("href", unref(WHATSAPP_URL))} target="_blank" rel="noopener" class="btn btn--wa" data-v-2567102c>`);
       _push(ssrRenderComponent(_component_AppIcon, { name: "whatsapp" }, null, _parent));
-      _push(` Order on WhatsApp</a></div><p class="pd__desc pd__anim" data-v-d1fc4397>${ssrInterpolate(unref(p).description)}</p><div class="pd__block pd__anim" data-v-d1fc4397><h2 class="eyebrow" data-v-d1fc4397>Taste profile</h2>`);
+      _push(` Order on WhatsApp</a></div><p class="pd__desc pd__anim" data-v-2567102c>${ssrInterpolate(unref(p).description)}</p><div class="pd__block pd__anim" data-v-2567102c><h2 class="eyebrow" data-v-2567102c>Taste profile</h2>`);
       _push(ssrRenderComponent(_component_TasteMeter, { taste: unref(p).taste }, null, _parent));
-      _push(`</div><div class="pd__block pd__anim" data-v-d1fc4397><h2 class="eyebrow" data-v-d1fc4397>Key ingredients</h2><ul class="pd__chips" data-v-d1fc4397><!--[-->`);
+      _push(`</div><div class="pd__block pd__anim" data-v-2567102c><h2 class="eyebrow" data-v-2567102c>Key ingredients</h2><ul class="pd__chips" data-v-2567102c><!--[-->`);
       ssrRenderList(unref(p).ingredients, (i) => {
-        _push(`<li data-v-d1fc4397>${ssrInterpolate(i)}</li>`);
+        _push(`<li data-v-2567102c>${ssrInterpolate(i)}</li>`);
       });
-      _push(`<!--]--></ul><p class="pd__small" data-v-d1fc4397>Full ingredient and allergen details are printed on the jar. If you have an allergy, please message us before ordering.</p></div><div class="pd__block pd__anim" data-v-d1fc4397><h2 class="eyebrow" data-v-d1fc4397>Best with</h2><ul class="pd__pairs" data-v-d1fc4397><!--[-->`);
+      _push(`<!--]--></ul><p class="pd__small" data-v-2567102c>Full ingredient and allergen details are printed on the jar. If you have an allergy, please message us before ordering.</p></div><div class="pd__block pd__anim" data-v-2567102c><h2 class="eyebrow" data-v-2567102c>Best with</h2><ul class="pd__pairs" data-v-2567102c><!--[-->`);
       ssrRenderList(unref(p).pairs, (x) => {
-        _push(`<li data-v-d1fc4397>`);
+        _push(`<li data-v-2567102c>`);
         _push(ssrRenderComponent(_component_AppIcon, { name: "check" }, null, _parent));
         _push(` ${ssrInterpolate(x)}</li>`);
       });
-      _push(`<!--]--></ul></div><div class="pd__block pd__care pd__anim" data-v-d1fc4397><p data-v-d1fc4397>`);
+      _push(`<!--]--></ul></div><div class="pd__block pd__care pd__anim" data-v-2567102c><p data-v-2567102c>`);
       _push(ssrRenderComponent(_component_AppIcon, { name: "fridge" }, null, _parent));
-      _push(` <span data-v-d1fc4397><strong data-v-d1fc4397>Keep refrigerated</strong> after opening.</span></p><p data-v-d1fc4397>`);
+      _push(` <span data-v-2567102c><strong data-v-2567102c>Keep refrigerated</strong> after opening.</span></p><p data-v-2567102c>`);
       _push(ssrRenderComponent(_component_AppIcon, { name: "leaf" }, null, _parent));
-      _push(` <span data-v-d1fc4397><strong data-v-d1fc4397>No additives</strong> or preservatives.</span></p></div></article></div><section class="container pd__more" aria-labelledby="more-title" data-v-d1fc4397><div class="pd__more-head" data-v-d1fc4397><h2 id="more-title" class="display pd__more-title" data-v-d1fc4397>More from <em data-v-d1fc4397>the kitchen</em></h2>`);
+      _push(` <span data-v-2567102c><strong data-v-2567102c>No additives</strong> or preservatives.</span></p></div></article></div><section class="container pd__more" aria-labelledby="more-title" data-v-2567102c><div class="pd__more-head" data-v-2567102c><h2 id="more-title" class="display pd__more-title" data-v-2567102c>More from <em data-v-2567102c>the kitchen</em></h2>`);
       _push(ssrRenderComponent(_component_NuxtLink, {
         to: "/flavours",
         class: "btn btn--ghost"
@@ -171,7 +174,7 @@ var _slug__vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
         }),
         _: 1
       }, _parent));
-      _push(`</div><div class="pd__more-grid" data-v-d1fc4397><!--[-->`);
+      _push(`</div><div class="pd__more-grid" data-v-2567102c><!--[-->`);
       ssrRenderList(unref(others), (o) => {
         _push(ssrRenderComponent(_component_NuxtLink, {
           key: o.slug,
@@ -185,7 +188,7 @@ var _slug__vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<span class="mk__disc" aria-hidden="true" data-v-d1fc4397${_scopeId}></span><span class="mk__shadow" aria-hidden="true" data-v-d1fc4397${_scopeId}></span><img class="mk__img"${ssrRenderAttr("src", o.image)}${ssrRenderAttr("alt", `${o.name} jar`)} width="300" height="400" loading="lazy" decoding="async" data-v-d1fc4397${_scopeId}><span class="mk__body" data-v-d1fc4397${_scopeId}><span class="eyebrow mk__eye" data-v-d1fc4397${_scopeId}>${ssrInterpolate(o.urdu)}</span><span class="display mk__name" data-v-d1fc4397${_scopeId}>${ssrInterpolate(o.short)}</span><span class="mk__tag" data-v-d1fc4397${_scopeId}>${ssrInterpolate(o.tagline)}</span></span><span class="mk__go" aria-hidden="true" data-v-d1fc4397${_scopeId}>`);
+              _push2(`<span class="mk__disc" aria-hidden="true" data-v-2567102c${_scopeId}></span><span class="mk__shadow" aria-hidden="true" data-v-2567102c${_scopeId}></span><img class="mk__img"${ssrRenderAttr("src", o.image)}${ssrRenderAttr("alt", `${o.name} jar`)} width="300" height="400" loading="lazy" decoding="async" data-v-2567102c${_scopeId}><span class="mk__body" data-v-2567102c${_scopeId}><span class="eyebrow mk__eye" data-v-2567102c${_scopeId}>${ssrInterpolate(o.urdu)}</span><span class="display mk__name" data-v-2567102c${_scopeId}>${ssrInterpolate(o.short)}</span><span class="mk__tag" data-v-2567102c${_scopeId}>${ssrInterpolate(o.tagline)}</span></span><span class="mk__go" aria-hidden="true" data-v-2567102c${_scopeId}>`);
               _push2(ssrRenderComponent(_component_AppIcon, { name: "arrow" }, null, _parent2, _scopeId));
               _push2(`</span>`);
             } else return [
@@ -230,7 +233,7 @@ _slug__vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("pages/chutney/[slug].vue");
   return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
 };
-var _slug__default = /* @__PURE__ */ _plugin_vue_export_helper_default(_slug__vue_vue_type_script_setup_true_lang_default, [["__scopeId", "data-v-d1fc4397"]]);
+var _slug__default = /* @__PURE__ */ _plugin_vue_export_helper_default(_slug__vue_vue_type_script_setup_true_lang_default, [["__scopeId", "data-v-2567102c"]]);
 
 export { _slug__default as default };
-//# sourceMappingURL=_slug_-Li6FMeAz.mjs.map
+//# sourceMappingURL=_slug_-CdVla_LF.mjs.map

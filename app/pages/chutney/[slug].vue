@@ -40,6 +40,8 @@ const view = ref<'photo' | '3d'>('photo')
 const mv = ref<any>()
 const ready = ref(false)
 const canAR = ref(false)
+const gl = ref(true)
+onMounted(() => { gl.value = hasWebGL() })
 // Returning from native AR (Scene Viewer / Quick Look) can leave model-viewer
 // mis-sized; rebuild it fresh the moment the page is visible again.
 const arKey = ref(0)
@@ -128,7 +130,7 @@ onBeforeUnmount(() => {
             <div v-else class="pd__spinner" aria-hidden="true" />
           </div>
 
-          <div class="pd__tabs" role="tablist" aria-label="View">
+          <div v-if="gl" class="pd__tabs" role="tablist" aria-label="View">
             <button role="tab" :aria-selected="view === 'photo'" :class="{ on: view === 'photo' }" @click="view = 'photo'">Photo</button>
             <button role="tab" :aria-selected="view === '3d'" :class="{ on: view === '3d' }" @click="show3d">3D view</button>
           </div>

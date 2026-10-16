@@ -1,6 +1,6 @@
 import { _ as _plugin_vue_export_helper_default, a as useSeoMeta, b as useHead, p as products, N as NuxtLink, f as formatPrice, e as WHATSAPP_URL, A as AppIcon_default, h as useRuntimeConfig } from '../virtual/entry.mjs';
-import { T as TasteMeter_default } from './TasteMeter-Cia0CdKk.mjs';
-import { O as OrderBlock_default } from './OrderBlock-Bi1p8zqv.mjs';
+import { T as TasteMeter_default } from './TasteMeter-BHzuA2QM.mjs';
+import { O as OrderBlock_default } from './OrderBlock-BgafvB_J.mjs';
 import { defineComponent, ref, mergeProps, unref, useSSRContext } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/index.mjs';
 import { ssrRenderAttrs, ssrInterpolate, ssrRenderList, ssrRenderClass, ssrRenderStyle, ssrRenderComponent, ssrRenderAttr } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/server-renderer/index.mjs';
 import 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/nostics/dist/index.mjs';
@@ -96,4 +96,4 @@ flavours_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
 var flavours_default = /* @__PURE__ */ _plugin_vue_export_helper_default(flavours_vue_vue_type_script_setup_true_lang_default, [["__scopeId", "data-v-32591be3"]]);
 
 export { flavours_default as default };
-//# sourceMappingURL=flavours-BIUh_fJx.mjs.map
+//# sourceMappingURL=flavours-TefTi3wa.mjs.map

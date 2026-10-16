@@ -138,7 +138,7 @@ const rendererDiagnostics = /* #__PURE__ */ defineDiagnostics({
 //#region src/runtime/server/renderer/build-files.ts
 const APP_ROOT_OPEN_TAG = `<${appRootTag}${propsToString(appRootAttrs)}>`;
 const APP_ROOT_CLOSE_TAG = `</${appRootTag}>`;
-const getServerEntry = () => import('../virtual/entry.mjs').then(function (n) { return n.m; }).then((r) => r.default || r);
+const getServerEntry = () => import('../virtual/entry.mjs').then(function (n) { return n.n; }).then((r) => r.default || r);
 const getPrecomputedDependencies = () => import('../virtual/precomputed.mjs').then((r) => "default" in r ? r.default : r).then((r) => typeof r === "function" ? r() : r);
 /** Load the build artifacts for a set of renderer options, caching each of them on the returned object. */
 function createBuildFiles(options) {
@@ -454,7 +454,7 @@ async function createInlinedCSSFilter(modules) {
 
 const entryIds = ["../node_modules/nuxt/dist/app/entry.js"];
 
-const entryFileName = "C9-MmSZE.js";
+const entryFileName = "D7auavRI.js";
 
 //#region src/runtime/server/renderer/index.ts
 const HAS_APP_TELEPORTS = !!(appTeleportAttrs.id);
