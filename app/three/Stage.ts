@@ -14,6 +14,8 @@ interface Jar {
   shadow: THREE.Mesh
   materials: THREE.Material[]
   hover: number
+  /** closed jar's real vertical extent in root space (measured once) */
+  boxY: [number, number]
 }
 
 const JAR_H = 0.17
@@ -206,7 +208,10 @@ export class Stage {
     materials.push(shadow.material as THREE.Material)
 
     this.rig.add(root)
-    return { root, spinner, capPivot, shadow, materials, hover: 0 }
+    root.updateMatrixWorld(true)
+    const bb = new THREE.Box3().setFromObject(spinner)
+    const boxY: [number, number] = Number.isFinite(bb.min.y) ? [bb.min.y, bb.max.y] : [-JAR_H / 2, JAR_H / 2]
+    return { root, spinner, capPivot, shadow, materials, hover: 0, boxY }
   }
 
   private makeShadowTexture() {
@@ -242,12 +247,20 @@ export class Stage {
   /** Expose the hero jar's real on-screen centre + height as CSS vars, so DOM
    *  decoration (the disc behind it) tracks the 3D jar exactly at every size. */
   private jarBox = { h: 0, x: 0, y: 0 }
-  private publishJarBox(view: { w: number; h: number }, scale: number) {
-    const h = (this.size.h * JAR_H * scale) / view.h
-    const x = this.size.w * (0.5 + this.rig.position.x / view.w)
-    const y = this.size.h * (0.5 - (this.rig.position.y - this.camera.position.y) / view.h)
-    const b = this.jarBox
-    if (Math.abs(b.h - h) < 0.3 && Math.abs(b.x - x) < 0.3 && Math.abs(b.y - y) < 0.3) return
+  private pA = new THREE.Vector3()
+  private pB = new THREE.Vector3()
+  /** Projects the focused jar's real top and bottom (incl. parallax tilt, bob,
+   *  hover lift, camera push) to screen pixels. */
+  private publishJarBox(jar: Jar) {
+    const toPx = (v: THREE.Vector3) => v.applyMatrix4(jar.root.matrixWorld).project(this.camera)
+    const [y0, y1] = jar.boxY
+    const a = toPx(this.pA.set(0, y0, 0))
+    const b = toPx(this.pB.set(0, y1, 0))
+    const h = Math.abs(a.y - b.y) * 0.5 * this.size.h
+    const x = ((a.x + b.x) * 0.25 + 0.5) * this.size.w
+    const y = (-(a.y + b.y) * 0.25 + 0.5) * this.size.h
+    const j = this.jarBox
+    if (Math.abs(j.h - h) < 0.3 && Math.abs(j.x - x) < 0.3 && Math.abs(j.y - y) < 0.3) return
     this.jarBox = { h, x, y }
     const st = document.documentElement.style
     st.setProperty('--jar-h', `${h.toFixed(1)}px`)
@@ -303,7 +316,6 @@ export class Stage {
     this.rig.rotation.y = this.pointerDamped.x * 0.18
     this.rig.rotation.x = -this.pointerDamped.y * 0.08 + (portrait ? 0 : 0.05) * L
     this.rig.scale.setScalar(THREE.MathUtils.lerp(C.scale, 1, L))
-    this.publishJarBox(view, THREE.MathUtils.lerp(C.scale, 1, L))
 
     // --- lineup hover via screen-space hit testing ---
     let hover = -1
@@ -369,6 +381,11 @@ export class Stage {
       ;(jar.shadow.material as THREE.MeshBasicMaterial).opacity = (0.35 + 0.25 * L) * Math.max(0, 1 - ad * (1 - L) * 1.4)
       jar.shadow.scale.setScalar(1 - bob * 10)
 
+      if (i === Math.round(C.flavour) && L < 0.5) {
+        this.rig.updateMatrixWorld(true)
+        this.camera.updateMatrixWorld()
+        this.publishJarBox(jar)
+      }
       // DOM anchors (just below each jar's base)
       this.tmp.set(0, -JAR_H / 2 - 0.012, 0).applyMatrix4(jar.root.matrixWorld)
       this.tmp.project(this.camera)

@@ -609,7 +609,7 @@ function _expandFromEnv(value) {
 const _inlineRuntimeConfig = {
   "app": {
     "baseURL": "/",
-    "buildId": "04ef45ac-90f8-4f4c-99f2-9e8582cb7b18",
+    "buildId": "3d37b458-ad59-4dc0-a628-feb39d3ace9d",
     "buildAssetsDir": "/_nuxt/",
     "cdnURL": ""
   },
@@ -1078,7 +1078,7 @@ const NUXT_NO_SCRIPTS_PATTERNS = [];
 const NUXT_PAGE_PATTERNS = ["/chutney/:slug","/accessibility","/cookies","/flavours","/menu","/privacy","/terms","/"];
 const NUXT_PAYLOAD_INLINE = false;
 const NUXT_SSR_STREAMING = false;
-const appHead = {"meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1, viewport-fit=cover"},{"name":"theme-color","content":"#1E0F0A"},{"name":"format-detection","content":"telephone=no"},{"property":"og:site_name","content":"Dia’s Taste"},{"property":"og:type","content":"website"},{"property":"og:image","content":"https://diastaste.com/images/og.jpg"},{"name":"twitter:card","content":"summary_large_image"}],"link":[{"rel":"icon","type":"image/png","sizes":"64x64","href":"/favicon-64.png"},{"rel":"icon","type":"image/png","sizes":"192x192","href":"/icon-192.png"},{"rel":"apple-touch-icon","href":"/apple-touch-icon.png"},{"rel":"manifest","href":"/site.webmanifest"},{"rel":"preload","href":"/models/aloo-bukhara.hero.glb","as":"fetch","crossorigin":"anonymous"}],"style":[],"script":[],"noscript":[],"htmlAttrs":{"lang":"en"},"titleTemplate":"%s · Dia’s Taste"};
+const appHead = {"meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1, viewport-fit=cover"},{"name":"theme-color","content":"#1E0F0A"},{"name":"format-detection","content":"telephone=no"},{"property":"og:site_name","content":"Dia’s Taste"},{"property":"og:type","content":"website"},{"property":"og:image","content":"https://diastaste.com/images/og.jpg"},{"name":"twitter:card","content":"summary_large_image"}],"link":[{"rel":"icon","type":"image/png","sizes":"64x64","href":"/favicon-64.png"},{"rel":"icon","type":"image/png","sizes":"192x192","href":"/icon-192.png"},{"rel":"apple-touch-icon","href":"/apple-touch-icon.png"},{"rel":"manifest","href":"/site.webmanifest"}],"style":[],"script":[],"noscript":[],"htmlAttrs":{"lang":"en"},"titleTemplate":"%s · Dia’s Taste"};
 const appRootTag = "div";
 const appRootAttrs = {"id":"__nuxt"};
 const appTeleportTag = "div";

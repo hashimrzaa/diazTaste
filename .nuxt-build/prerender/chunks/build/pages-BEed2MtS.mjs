@@ -1,4 +1,4 @@
-import { a as useSeoMeta, b as useHead, e as WHATSAPP_URL, p as products, C as ClientOnly, h as useRuntimeConfig, _ as _plugin_vue_export_helper_default, i as useIntroDone, j as useLoadProgress, k as useHeroFlavour, l as useNoWebGL, m as gsapWithCSS, s as stageState, N as NuxtLink, A as AppIcon_default } from '../virtual/entry.mjs';
+import { a as useSeoMeta, p as products, b as useHead, e as WHATSAPP_URL, C as ClientOnly, h as useRuntimeConfig, _ as _plugin_vue_export_helper_default, i as useIntroDone, j as useLoadProgress, k as useHeroFlavour, l as useNoWebGL, m as gsapWithCSS, s as stageState, N as NuxtLink, A as AppIcon_default } from '../virtual/entry.mjs';
 import { O as OrderBlock_default } from './OrderBlock-BgafvB_J.mjs';
 import { defineComponent, mergeProps, ref, computed, watch, unref, withCtx, createVNode, openBlock, createBlock, Fragment, renderList, toDisplayString, useSSRContext } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/index.mjs';
 import { ssrRenderAttrs, ssrRenderComponent, ssrRenderAttr, ssrRenderList, ssrRenderStyle, ssrInterpolate, ssrRenderClass } from 'file://C:/Users/PublicUser/Documents/projects/diaz/node_modules/vue/server-renderer/index.mjs';
@@ -211,12 +211,16 @@ var index_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
       ogDescription: "Five homemade chutneys, no additives. Order on WhatsApp.",
       ogUrl: config.public.siteUrl
     });
+    const PRELOAD_HERO = `(function(){try{var c=document.createElement('canvas'),g=c.getContext('webgl2')||c.getContext('webgl');if(!g)return;var x=g.getExtension('WEBGL_lose_context');x&&x.loseContext();var l=document.createElement('link');l.rel='preload';l.as='fetch';l.crossOrigin='anonymous';l.href='/models/${products[2].slug}.hero.glb';document.head.appendChild(l)}catch(e){}})()`;
     useHead({
       link: [{
         rel: "canonical",
         href: config.public.siteUrl
       }],
       script: [{
+        innerHTML: PRELOAD_HERO,
+        tagPosition: "head"
+      }, {
         type: "application/ld+json",
         innerHTML: JSON.stringify({
           "@context": "https://schema.org",
@@ -261,4 +265,4 @@ index_vue_vue_type_script_setup_true_lang_default.setup = (props, ctx) => {
 var pages_default = index_vue_vue_type_script_setup_true_lang_default;
 
 export { pages_default as default };
-//# sourceMappingURL=pages-BvGcheAq.mjs.map
+//# sourceMappingURL=pages-BEed2MtS.mjs.map

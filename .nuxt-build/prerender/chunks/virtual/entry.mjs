@@ -10223,7 +10223,7 @@ var virtual_nuxt__nuxt_build_2Froutes_default = [
 	{
 		name: "index",
 		path: "/",
-		component: () => import('../build/pages-BvGcheAq.mjs')
+		component: () => import('../build/pages-BEed2MtS.mjs')
 	}
 ];
 //#endregion

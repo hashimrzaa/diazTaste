@@ -86,7 +86,7 @@
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/04ef45ac-90f8-4f4c-99f2-9e8582cb7b18.json"
+        "./manifest/meta/3d37b458-ad59-4dc0-a628-feb39d3ace9d.json"
       ],
       "nitropack/types": [
         "../node_modules/nitropack/types.d.ts"
