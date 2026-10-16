@@ -61,7 +61,7 @@ export class Stage {
     })
     // Cap the pixel ratio: 2× on a 1440p laptop is 4× the fragment work of 1× for
     // a glossy, transparent jar + ~100 ingredient meshes, and reads as jank.
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio, this.lowPower ? 1.75 : 1.5))
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio, this.lowPower ? 2 : 1.5))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping
     this.renderer.toneMappingExposure = 0.92
@@ -237,6 +237,22 @@ export class Stage {
     this.camera.updateProjectionMatrix()
   }
 
+  /** Expose the hero jar's real on-screen centre + height as CSS vars, so DOM
+   *  decoration (the disc behind it) tracks the 3D jar exactly at every size. */
+  private jarBox = { h: 0, x: 0, y: 0 }
+  private publishJarBox(view: { w: number; h: number }, scale: number) {
+    const h = (this.size.h * JAR_H * scale) / view.h
+    const x = this.size.w * (0.5 + this.rig.position.x / view.w)
+    const y = this.size.h * (0.5 - (this.rig.position.y - this.camera.position.y) / view.h)
+    const b = this.jarBox
+    if (Math.abs(b.h - h) < 0.3 && Math.abs(b.x - x) < 0.3 && Math.abs(b.y - y) < 0.3) return
+    this.jarBox = { h, x, y }
+    const st = document.documentElement.style
+    st.setProperty('--jar-h', `${h.toFixed(1)}px`)
+    st.setProperty('--jar-x', `${x.toFixed(1)}px`)
+    st.setProperty('--jar-y', `${y.toFixed(1)}px`)
+  }
+
   /** Visible world size at the jar plane for a given camera distance. */
   private viewSize(dist: number) {
     const h = 2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2)) * dist
@@ -285,6 +301,7 @@ export class Stage {
     this.rig.rotation.y = this.pointerDamped.x * 0.18
     this.rig.rotation.x = -this.pointerDamped.y * 0.08 + (portrait ? 0 : 0.05) * L
     this.rig.scale.setScalar(THREE.MathUtils.lerp(C.scale, 1, L))
+    this.publishJarBox(view, THREE.MathUtils.lerp(C.scale, 1, L))
 
     // --- lineup hover via screen-space hit testing ---
     let hover = -1

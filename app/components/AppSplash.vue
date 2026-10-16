@@ -58,7 +58,7 @@ function leave() {
   leaving = true
   dropTo(1)
   const reduce = prefersReducedMotion()
-  gsap.timeline({ delay: reduce ? 0 : 0.55, onComplete: () => { visible.value = false; lockScroll(false) } })
+  gsap.timeline({ delay: reduce ? 0 : 0.3, onComplete: () => { visible.value = false; lockScroll(false) } })
     .to('.sp__panel', { yPercent: 0, duration: reduce ? 0.01 : 0.75, ease: 'expo.inOut' })
     .set(['.sp__pile', '.sp__count'], { autoAlpha: 0 })
     .call(() => { introDone.value = true })
@@ -70,7 +70,7 @@ watch(progress, (p) => {
   tw?.kill()
   tw = gsap.to(shown, { value: p, duration: 0.5, ease: 'power2.out',
     onUpdate: () => dropTo(Math.min(shown.value, 0.97)),
-    onComplete: () => { if (p >= 1) setTimeout(leave, Math.max(0, 1500 - (performance.now() - started))) } })
+    onComplete: () => { if (p >= 1) setTimeout(leave, Math.max(0, 700 - (performance.now() - started))) } })
 })
 
 onMounted(async () => {
@@ -81,7 +81,7 @@ onMounted(async () => {
   gsap.set('.sp__panel', { yPercent: 100 })
   gsap.set('.sp__p', { opacity: 0 })
   if (progress.value > 0) dropTo(Math.min(progress.value, 0.97))
-  if (progress.value >= 1) setTimeout(leave, 1500)
+  if (progress.value >= 1) setTimeout(leave, 700)
   setTimeout(() => { if (!introDone.value) progress.value = 1 }, 9000) // never strand anyone
 })
 </script>

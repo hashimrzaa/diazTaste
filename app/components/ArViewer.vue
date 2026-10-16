@@ -11,6 +11,13 @@ const ready = ref(false)
 const loaded = ref(false)
 const canAR = ref<boolean | null>(null)
 const arStatus = ref('not-presenting')
+const arKey = ref(0)
+let inAr = false
+function backFromAr() {
+  if (!inAr || document.visibilityState !== 'visible') return
+  inAr = false
+  arKey.value++
+}
 const arScale = ref(100)
 const qr = ref('')
 const touch = ref(false)
@@ -38,10 +45,12 @@ function onLoad() {
 
 function onArStatus(e: { detail?: { status?: string } }) {
   arStatus.value = e.detail?.status ?? 'not-presenting'
+  if (arStatus.value === 'not-presenting' && inAr) { inAr = false; arKey.value++ }
 }
 
 // Launch the device’s native AR (Scene Viewer / WebXR on Android, Quick Look on iOS).
 function launch() {
+  inAr = true
   mv.value?.activateAR?.()
 }
 
@@ -115,10 +124,12 @@ watch(arStatus, (s) => {
 onMounted(() => {
   touch.value = isTouch()
   window.addEventListener('keydown', onKey)
+  document.addEventListener('visibilitychange', backFromAr)
 })
 onBeforeUnmount(() => {
   clearInterval(scaleTimer)
   window.removeEventListener('keydown', onKey)
+  document.removeEventListener('visibilitychange', backFromAr)
 })
 </script>
 
@@ -146,7 +157,7 @@ onBeforeUnmount(() => {
       <model-viewer
         v-if="ready"
         ref="mv"
-        :key="product.slug"
+        :key="`${product.slug}-${arKey}`"
         class="arv__mv"
         :src="product.model"
         :alt="`Interactive 3D model of a ${product.name} jar. Drag to rotate.`"

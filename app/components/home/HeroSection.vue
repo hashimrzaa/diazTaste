@@ -14,14 +14,14 @@ const introDone = useIntroDone()
 const progress = useLoadProgress()
 const active = useHeroFlavour()
 const p = computed(() => products[active.value]!)
-const callouts = computed(() => p.value.ingredients.slice(0, 4).map((k, i) => ({ k, pos: ['tl', 'tr', 'bl', 'br'][i]! })))
+const callouts = computed(() => p.value.ingredients.slice(0, 4).map((k, i) => ({ k: k.replace(/\s*\(.*?\)/g, ''), pos: ['tl', 'tr', 'bl', 'br'][i]! })))
 let ctx: gsap.Context | undefined
 let split: SplitText[] = []
 let chars: HTMLElement[] = []
 let played = false
 let floatTl: gsap.core.Timeline | undefined
 
-const base = () => (isMobile() ? { x: 0, y: -0.07, scale: 0.48 } : { x: 0, y: -0.02, scale: 0.8 })
+const base = () => (isMobile() ? { x: 0, y: -0.085, scale: 0.62 } : { x: 0, y: -0.02, scale: 0.8 })
 
 function intro() {
   if (played) return
@@ -72,17 +72,15 @@ onMounted(() => {
     const mm = gsap.matchMedia()
     mm.add({ desktop: '(min-width: 769px)', mobile: '(max-width: 768px)' }, (c) => {
       const m = c.conditions!.mobile
-      const b = m ? { y: -0.07, scale: 0.48 } : { y: -0.02, scale: 0.8 }
+      const b = m ? { y: -0.085, scale: 0.62 } : { y: -0.02, scale: 0.8 }
       gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: root.value, start: 'top top', end: 'bottom bottom', scrub: 0.3 } })
         .to(['.hx__row', '.hx__notes', '.hx__mtitle', '.hx__mcopy', '.hx__recipe'], { autoAlpha: 0, y: -30, duration: 0.1 }, 0)
-        .fromTo(stageState, b, { y: m ? -0.07 : -0.02, scale: m ? 0.56 : 0.9, duration: 0.14, ease: 'power2.inOut', immediateRender: false }, 0.02)
-        .to('.hx__disc', { scale: 1.08, duration: 0.2 }, 0.02)
+        .fromTo(stageState, b, { y: m ? -0.03 : -0.02, scale: m ? 0.72 : 0.9, duration: 0.14, ease: 'power2.inOut', immediateRender: false }, 0.02)
         .fromTo(stageState, { cap: 0, spread: 0.35 }, { cap: 1, spread: 1.5, duration: 0.18, ease: 'power2.out', immediateRender: false }, 0.14)
         .fromTo('.hx__callout', { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, stagger: 0.03, duration: 0.06, immediateRender: false }, 0.26)
         .to('.hx__callout', { autoAlpha: 0, duration: 0.05 }, 0.5)
         .fromTo(stageState, { mix: 0 }, { mix: 1, duration: 0.26, ease: 'power1.inOut', immediateRender: false }, 0.52)
         .to(stageState, { cap: 0, duration: 0.12, ease: 'power2.inOut' }, 0.8)
-        .to('.hx__disc', { scale: 1, duration: 0.2 }, 0.8)
         .fromTo(stageState, { spin: 0 }, { spin: Math.PI * 2, duration: 1, ease: 'power1.inOut', immediateRender: false }, 0)
     })
   }, root.value)
@@ -151,7 +149,7 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
 
       <div class="hx__hot" aria-hidden="true" @pointerenter="turnToFront" @pointerleave="releaseJar" />
       <div v-for="c in callouts" :key="c.pos" class="hx__callout" :class="`p-${c.pos}`" aria-hidden="true">
-        <span class="hx__dot" /><span class="hx__rule" /><span class="hx__ck display">{{ c.k }}</span>
+        <span class="hx__ck display">{{ c.k }}</span><svg class="hx__arr" viewBox="0 0 120 50" aria-hidden="true"><path d="M2 8 H44 L112 44" /><path class="hx__ah" d="M100 44 L113 45 L107 33" /></svg>
       </div>
     </div>
   </section>
@@ -164,7 +162,7 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
 .hx__front { z-index: 3; margin-top: -100vh; margin-top: -100svh; pointer-events: none; }
 .hx__front a, .hx__front button { pointer-events: auto; }
 
-.hx__disc { position: absolute; left: 50%; top: 52%; width: var(--D); aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; overflow: hidden;
+.hx__disc { position: absolute; left: var(--jar-x, 50%); top: var(--jar-y, 52%); width: calc(var(--jar-h, calc(var(--D) * 0.8)) * 1.26); aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; overflow: hidden;
   background: radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 45%, color-mix(in srgb, var(--a) 35%, var(--t)) 100%);
   box-shadow: 0 40px 90px -50px color-mix(in srgb, var(--a) 70%, transparent); transition: background 0.8s var(--ease-out), box-shadow 0.8s; }
 .hx__glow { position: absolute; left: 30%; top: 25%; width: 70%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, 0.7), transparent 70%); animation: glow 8s ease-in-out infinite alternate; }
@@ -174,12 +172,12 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
 .hx { --col: calc((100vw - var(--D) - 6vh - 2 * var(--gutter)) / 2); --fsL: min(calc(var(--col) / 2.95), 19vh); --fsR: min(calc(var(--col) / 3.45), 17vh); }
 .hx__row { position: absolute; left: 0; right: 0; top: 52%; translate: 0 calc(var(--fsR) * -0.62); display: grid; grid-template-columns: 1fr calc(var(--D) + 6vh) 1fr; align-items: start; padding: 0 var(--gutter); }
 .hx__col { display: flex; }
-.hx__col--l { justify-content: flex-end; }
+.hx__col--l { justify-content: flex-end; padding-right: 3.5vh; }
 .hx__col--r { justify-content: flex-start; }
 .hx__stack { display: flex; flex-direction: column; gap: 2.6vh; width: min-content; }
 .hx__w { display: block; font-size: var(--fsL); font-weight: 800; line-height: 1; letter-spacing: -0.045em; white-space: nowrap; pointer-events: auto; }
 .hx__w--red { font-size: var(--fsR); padding-right: 0.06em; background: linear-gradient(100deg, var(--a) 0%, color-mix(in srgb, var(--a) 55%, #fff) 35%, var(--a) 60%, var(--d) 100%) 0 0 / 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s linear infinite; }
-.hx__w--red :deep(.hx__c) { background: inherit; -webkit-background-clip: text; background-clip: text; }
+.hx__w--red :deep(.hx__c) { background: inherit; -webkit-background-clip: text; background-clip: text; padding: 0 0.08em; margin: 0 -0.08em; }
 @keyframes shine { to { background-position: -220% 0; } }
 :deep(.hx__c) { display: inline-block; will-change: transform; cursor: default; }
 
@@ -220,21 +218,22 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
 
 .hx__recipe { display: none; }
 .hx__mtitle, .hx__mcopy { display: none; }
-.hx__hot { position: absolute; left: 50%; top: 52%; width: calc(var(--D) * 0.5); height: calc(var(--D) * 1.05); translate: -50% -50%; pointer-events: auto; cursor: grab; }
+.hx__hot { position: absolute; left: var(--jar-x, 50%); top: var(--jar-y, 52%); width: calc(var(--jar-h, var(--D)) * 0.62); height: calc(var(--jar-h, var(--D)) * 1.1); translate: -50% -50%; pointer-events: auto; cursor: grab; }
 
-.hx__callout { position: absolute; display: flex; align-items: center; gap: 10px; }
-.hx__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--a); box-shadow: 0 0 0 5px color-mix(in srgb, var(--a) 22%, transparent); }
-.hx__rule { width: clamp(30px, 6vh, 80px); height: 1.5px; background: var(--ink); opacity: 0.35; }
+.hx__callout { position: absolute; display: flex; align-items: flex-start; }
 .hx__ck { font-size: clamp(1rem, 2.8vh, 1.6rem); line-height: 1; white-space: nowrap; }
-.p-tl { right: calc(50% + var(--D) * 0.55); top: 32%; flex-direction: row-reverse; }
-.p-tr { left: calc(50% + var(--D) * 0.55); top: 32%; }
-.p-bl { right: calc(50% + var(--D) * 0.55); top: 68%; flex-direction: row-reverse; }
-.p-br { left: calc(50% + var(--D) * 0.55); top: 68%; }
+.p-tl { right: calc(50% + var(--D) * 0.3); top: calc(50% - var(--D) * 0.52); }
+.p-tr { left: calc(50% + var(--D) * 0.3); top: calc(50% - var(--D) * 0.52); flex-direction: row-reverse; }
+.p-tr .hx__arr { transform: scaleX(-1); }
+.p-bl { right: calc(50% + var(--D) * 0.3); top: calc(50% + var(--D) * 0.34); align-items: flex-end; }
+.p-bl .hx__arr { transform: scaleY(-1); margin: 0 0 10px; }
+.p-br { left: calc(50% + var(--D) * 0.3); top: calc(50% + var(--D) * 0.34); flex-direction: row-reverse; align-items: flex-end; }
+.p-br .hx__arr { transform: scale(-1, -1); margin: 0 0 10px; }
 
 @media (max-width: 768px) {
-  .hx { --D: min(36vh, 74vw); }
+  .hx { --D: min(38vh, 78vw); }
   .hx__row, .hx__notes { display: none; }
-  .hx__disc, .hx__hot { top: 57%; }
+  .hx__hot { top: var(--jar-y, 57%); }
   .hx__mtitle { display: block; position: absolute; left: 0; right: 0; top: 92px; text-align: center; font-size: clamp(2.2rem, 11vw, 3rem); font-weight: 800; letter-spacing: -0.04em; }
   .hx__mtitle span { color: var(--a); transition: color 0.6s; }
   .hx__recipe { display: grid; gap: 4px; position: absolute; left: var(--gutter); right: var(--gutter); top: 150px; padding: 12px 16px; border-radius: 18px; background: #fff; box-shadow: 0 16px 36px -24px rgba(30, 15, 10, 0.4), inset 0 0 0 1px var(--line); border-left: 5px solid var(--a); }
@@ -246,10 +245,17 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
   .hx__mstats dd { font-size: 1.4rem; line-height: 1.1; }
   .hx__mstats dt { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
   .hx__mcopy { display: block; position: absolute; left: var(--gutter); right: var(--gutter); top: calc(57% + var(--D) / 2 + 14px); text-align: center; font-size: 0.95rem; line-height: 1.5; color: var(--ink-2); }
-  .p-tl, .p-bl { right: auto; left: 2%; flex-direction: row; }
-  .p-tr, .p-br { left: auto; right: 2%; flex-direction: row-reverse; }
-  .p-tl, .p-tr { top: 28%; } .p-bl, .p-br { top: 68%; }
-  .hx__rule { width: 12px; }
-  .hx__ck { font-size: 0.9rem; max-width: 30vw; white-space: normal; }
+  /* label at the screen edge, arrow tucked under/over it pointing in at the jar */
+  .hx__callout { flex-direction: column; gap: 6px; }
+  .hx__callout .hx__arr { width: 64px; margin: 0; }
+  .hx__callout .hx__ck { font-size: 0.8rem; }
+  .p-tl, .p-tr { top: calc(var(--jar-y, 57%) - var(--jar-h, 150px) * 0.42); }
+  .p-bl, .p-br { top: calc(var(--jar-y, 57%) + var(--jar-h, 150px) * 0.08); flex-direction: column-reverse; }
+  .p-tl, .p-bl { left: var(--gutter); right: auto; align-items: flex-start; }
+  .p-tr, .p-br { right: var(--gutter); left: auto; align-items: flex-end; }
+  .p-tl .hx__arr, .p-bl .hx__arr { margin-left: 24px; }
+  .p-tr .hx__arr, .p-br .hx__arr { margin-right: 24px; }
+  .p-bl .hx__arr, .p-br .hx__arr { margin: 0; }
+  .p-bl .hx__arr { margin-left: 24px; } .p-br .hx__arr { margin-right: 24px; }
 }
 </style>

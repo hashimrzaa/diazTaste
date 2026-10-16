@@ -40,6 +40,23 @@ const view = ref<'photo' | '3d'>('photo')
 const mv = ref<any>()
 const ready = ref(false)
 const canAR = ref(false)
+// Returning from native AR (Scene Viewer / Quick Look) can leave model-viewer
+// mis-sized; rebuild it fresh the moment the page is visible again.
+const arKey = ref(0)
+let inAr = false
+function launchAr() {
+  inAr = true
+  mv.value?.activateAR?.()
+}
+function backFromAr() {
+  if (!inAr || document.visibilityState !== 'visible') return
+  inAr = false
+  arKey.value++
+}
+function onArStatus(e: { detail?: { status?: string } }) {
+  if (e.detail?.status === 'session-started') inAr = true
+  if (e.detail?.status === 'not-presenting' && inAr) { inAr = false; arKey.value++ }
+}
 const root = ref<HTMLElement>()
 let ctx: gsap.Context | undefined
 
@@ -55,13 +72,19 @@ function onLoad() {
 watch(() => p.value.slug, () => { view.value = 'photo'; canAR.value = false })
 
 onMounted(() => {
+  document.addEventListener('visibilitychange', backFromAr)
+  window.addEventListener('pageshow', backFromAr)
   if (route.query.ar) show3d()
   ctx = gsap.context(() => {
     gsap.from('.pd__anim', { y: 30, opacity: 0, stagger: 0.06, duration: 1, delay: 0.15, ease: 'expo.out' })
     gsap.from('.pd__media', { scale: 0.96, opacity: 0, duration: 1.2, ease: 'expo.out' })
   }, root.value)
 })
-onBeforeUnmount(() => ctx?.revert())
+onBeforeUnmount(() => {
+  document.removeEventListener('visibilitychange', backFromAr)
+  window.removeEventListener('pageshow', backFromAr)
+  ctx?.revert()
+})
 </script>
 
 <template>
@@ -74,7 +97,7 @@ onBeforeUnmount(() => ctx?.revert())
             <model-viewer
               v-if="ready"
               ref="mv"
-              :key="p.slug"
+              :key="`${p.slug}-${arKey}`"
               class="pd__mv"
               :src="p.model"
               :alt="`3D view of the ${p.name} jar. Drag to turn it.`"
@@ -97,6 +120,7 @@ onBeforeUnmount(() => ctx?.revert())
               ar-scale="auto"
               ar-placement="floor"
               @load="onLoad"
+              @ar-status="onArStatus"
             >
               <span slot="ar-button" hidden />
               <div slot="progress-bar" />
@@ -109,7 +133,7 @@ onBeforeUnmount(() => ctx?.revert())
             <button role="tab" :aria-selected="view === '3d'" :class="{ on: view === '3d' }" @click="show3d">3D view</button>
           </div>
           <p v-if="view === '3d'" class="pd__hint"><AppIcon name="rotate" /> Drag to turn</p>
-          <button v-if="view === '3d' && canAR" class="btn pd__ar" @click="mv?.activateAR?.()"><AppIcon name="cube" /> View in your space</button>
+          <button v-if="view === '3d' && canAR" class="btn pd__ar" @click="launchAr"><AppIcon name="cube" /> View in your space</button>
         </div>
       </div>
 

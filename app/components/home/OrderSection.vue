@@ -45,7 +45,7 @@ onBeforeUnmount(() => ctx?.revert())
         v-for="(p, i) in products"
         :key="p.slug"
         class="od__slot"
-        :class="{ on: hover === i, dim: hover !== null && hover !== i }"
+        :class="{ on: hover === i, dim: hover !== null && hover !== i, 'edge-l': i === 0, 'edge-r': i === products.length - 1 }"
         :style="{ '--a': p.color.accent, '--d': p.color.deep, '--r': `${(i - 2) * 6}deg`, zIndex: hover === i ? 10 : 5 - Math.abs(i - 2) }"
         @pointerenter="!touch && enter(i)"
       >
@@ -93,6 +93,10 @@ onBeforeUnmount(() => ctx?.revert())
   opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.45s var(--ease-out); color: inherit;
 }
 .od__slot.on .od__tag { opacity: 1; transform: translate(-50%, -22px); pointer-events: auto; }
+.edge-l .od__tag { left: 0; transform: translate(0, 10px); }
+.edge-l.on .od__tag { transform: translate(0, -22px); }
+.edge-r .od__tag { left: auto; right: 0; transform: translate(0, 10px); }
+.edge-r.on .od__tag { transform: translate(0, -22px); }
 .od__tag:hover .od__tag-cta { color: var(--a); }
 .od__tag-name { font-size: 1.5rem; line-height: 1; color: var(--d); }
 .od__tag-tag { font-size: 0.82rem; font-style: italic; color: var(--a); }
@@ -103,5 +107,7 @@ onBeforeUnmount(() => ctx?.revert())
   .od__slot { width: 30vw; margin: 0 -6vw; }
   .od__jars { padding-top: 230px; }
   .od__tag { max-width: 190px; padding: 10px 12px; }
+  .edge-l .od__tag { left: 8vw; }
+  .edge-r .od__tag { right: 8vw; }
 }
 </style>
