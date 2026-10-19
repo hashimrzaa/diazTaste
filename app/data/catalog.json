@@ -223,7 +223,7 @@
     },
     {
       "slug": "khajoor",
-      "hidden": false,
+      "hidden": true,
       "name": "Khajoor Chutney",
       "short": "Khajoor",
       "urdu": "Khajoor",
@@ -236,7 +236,7 @@
         },
         {
           "label": "500 g",
-          "price": null
+          "price": 0
         }
       ],
       "ingredients": [
