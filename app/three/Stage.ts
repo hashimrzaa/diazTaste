@@ -299,7 +299,7 @@ export class Stage {
     // --- camera: frame one jar, or the whole lineup ---
     const portrait = this.camera.aspect < 0.9
     const singleDist = portrait ? 0.62 / Math.max(0.62, this.camera.aspect * 1.1) : 0.62
-    const lineW = LINE_GAP * 4 + 0.14
+    const lineW = LINE_GAP * Math.max(0, this.models.length - 1) + 0.14
     const lineDist = (lineW / (portrait ? 0.92 : 0.62)) / this.camera.aspect / (2 * Math.tan(THREE.MathUtils.degToRad(FOV / 2)))
     // Saturate early: the carousel parks neighbours far off-screen, so even a 10%
     // shortfall in `lineup` would leave a visible staircase. Past ~60% the row is

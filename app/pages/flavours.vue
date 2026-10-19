@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
-import { products, formatPrice, WHATSAPP_URL } from '~/data/products'
+import { products, formatPrice, countWord, WHATSAPP_URL } from '~/data/products'
 
 const config = useRuntimeConfig()
 useSeoMeta({
   title: 'Flavours',
-  description: 'All five Dia’s Taste chutneys — Green, Garlic, Aloo Bukhara, Imli and Khajoor — in 500 g jars. Homemade, no additives.',
+  description: `All ${countWord().toLowerCase()} Dia’s Taste chutneys — ${products.map((p) => p.short).join(', ')} — in 250 g and 500 g jars. Homemade, no additives.`,
   ogUrl: `${config.public.siteUrl}/flavours`,
 })
 useHead({ link: [{ rel: 'canonical', href: `${config.public.siteUrl}/flavours` }] })
@@ -38,9 +38,9 @@ onBeforeUnmount(() => ctx?.revert())
 <template>
   <div ref="root" class="fv">
     <section class="container fv__intro">
-      <p class="eyebrow fv__eyebrow">The flavours · {{ products.length }} chutneys · 500 g each</p>
-      <h1 class="fv__title display">Five jars, <em>endless</em> plates.</h1>
-      <p class="lead">Cooked in small batches with nothing added. Pick one — or all five.</p>
+      <p class="eyebrow fv__eyebrow">The flavours · {{ products.length }} chutneys · 250 g &amp; 500 g jars</p>
+      <h1 class="fv__title display">{{ countWord() }} jars, <em>endless</em> plates.</h1>
+      <p class="lead">Cooked in small batches with nothing added. Pick one — or all {{ countWord().toLowerCase() }}.</p>
     </section>
 
     <section class="container" aria-label="All chutneys">
@@ -49,7 +49,7 @@ onBeforeUnmount(() => ctx?.revert())
           v-for="(p, i) in products"
           :key="p.slug"
           class="fb__tile"
-          :class="['fb__tile--big', { 'fb__tile--wide': i === products.length - 1 }]"
+          :class="['fb__tile--big', { 'fb__tile--wide': i === products.length - 1 && products.length % 2 === 1 }]"
           :style="{ '--t': p.color.tint, '--a': p.color.accent, '--d': p.color.deep, '--accent': p.color.accent }"
           @pointermove="tilt"
           @pointerleave="untilt"
@@ -58,7 +58,7 @@ onBeforeUnmount(() => ctx?.revert())
           <span class="fb__no display" aria-hidden="true">0{{ i + 1 }}</span>
           <div class="fb__media">
             <span class="fb__glow" aria-hidden="true" />
-            <img class="fb__img" :src="p.image" :alt="`${p.name}, 500 g jar`" width="400" height="530" loading="lazy" />
+            <img class="fb__img" :src="p.image" :alt="`${p.name} jar`" width="400" height="530" loading="lazy" />
           </div>
           <div class="fb__body">
             <p class="eyebrow fb__eye">{{ p.urdu }}</p>

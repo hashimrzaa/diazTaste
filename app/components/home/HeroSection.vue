@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
-import { products } from '~/data/products'
+import { products, countWord, sizesShort } from '~/data/products'
+const lead = `${countWord()} chutneys cooked the way Ammi always made them — real fruit, fresh herbs, nothing added.`
+const sizes = sizesShort()
 
 /* Hero, one straight line:  Dia's  |  jar on a light disc  |  Taste
    under "Dia's": description + stats · under "Taste": the white flavour card.
@@ -109,11 +111,11 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
           <div class="hx__stack">
             <span class="hx__w display" aria-hidden="true" @pointerover="lift" @pointerout="drop">Dia’s</span>
             <div class="hx__copy hx__reveal">
-              <p class="hx__lead">Five chutneys cooked the way Ammi always made them — real fruit, fresh herbs, nothing added.</p>
+              <p class="hx__lead">{{ lead }}</p>
               <dl class="hx__stats">
                 <div><dt>Homemade</dt><dd class="display">100%</dd></div>
                 <div><dt>Additives</dt><dd class="display">0</dd></div>
-                <div><dt>Per jar</dt><dd class="display">500g</dd></div>
+                <div><dt>Jar sizes</dt><dd class="display">{{ sizes }}</dd></div>
               </dl>
             </div>
           </div>
@@ -143,11 +145,11 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
         <ol><li v-for="(st, si) in p.recipe.steps" :key="si">{{ st }}</li></ol>
       </div>
       <div class="hx__mcopy hx__reveal">
-        <p>Five chutneys cooked the way Ammi always made them — real fruit, fresh herbs, nothing added.</p>
+        <p>{{ lead }}</p>
         <dl class="hx__mstats">
           <div><dd class="display">100%</dd><dt>Homemade</dt></div>
           <div><dd class="display">0</dd><dt>Additives</dt></div>
-          <div><dd class="display">500g</dd><dt>Per jar</dt></div>
+          <div><dd class="display">{{ sizes }}</dd><dt>Jar sizes</dt></div>
         </dl>
       </div>
 

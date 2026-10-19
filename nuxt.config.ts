@@ -42,6 +42,12 @@ export default defineNuxtConfig({
     compilerOptions: { isCustomElement: (tag) => tag === 'model-viewer' },
   },
 
+  routeRules: {
+    // admin is a client-side app behind a password; never prerendered or indexed
+    '/admin': { ssr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } },
+    '/api/**': { headers: { 'Cache-Control': 'no-store' } },
+  },
+
   nitro: {
     prerender: {
       crawlLinks: true,

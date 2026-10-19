@@ -25,7 +25,7 @@ export const defaultState = (): StageState => ({
   spin: 0,
   tilt: 0,
   cap: 0,
-  flavour: 2,
+  flavour: 0, // the hero sets the real starting flavour
   lineup: 0,
   pan: 0,
   spread: 0,

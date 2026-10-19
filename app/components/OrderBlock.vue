@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
 import QRCode from 'qrcode'
-import { WHATSAPP_URL, WHATSAPP_DISPLAY, WHATSAPP_TEL } from '~/data/products'
+import { products, WHATSAPP_URL, WHATSAPP_DISPLAY, WHATSAPP_TEL } from '~/data/products'
 
 /* Shared "Hungry yet?" order block — used on the landing page and /flavours. */
 const root = ref<HTMLElement>()
@@ -26,7 +26,7 @@ onBeforeUnmount(() => ctx?.revert())
 <template>
     <div id="order" ref="root" class="od">
       <div class="od__marquee" aria-hidden="true">
-        <span v-for="n in 2" :key="n">Green · Garlic · Aloo Bukhara · Imli · Khajoor · </span>
+        <span v-for="n in 2" :key="n">{{ products.map((x) => x.short).join(' · ') }} · </span>
       </div>
       <div class="container od__grid">
         <p class="eyebrow od__eyebrow"><span>03</span> Order</p>

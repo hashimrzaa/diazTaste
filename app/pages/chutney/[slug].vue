@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
-import { products, getProduct, formatPrice, WHATSAPP_URL, WHATSAPP_DISPLAY, WHATSAPP_TEL } from '~/data/products'
+import { products, getProduct, formatPrice, rs, WHATSAPP_URL, WHATSAPP_DISPLAY, WHATSAPP_TEL } from '~/data/products'
 
 const route = useRoute()
 const config = useRuntimeConfig()
@@ -12,7 +12,7 @@ const url = computed(() => `${config.public.siteUrl}/chutney/${p.value.slug}`)
 
 useSeoMeta({
   title: () => p.value.name,
-  description: () => `${p.value.name} by Dia’s Taste — ${p.value.tagline} 500 g, homemade, no additives.`,
+  description: () => `${p.value.name} by Dia’s Taste — ${p.value.tagline} ${p.value.weight}, homemade, no additives.`,
   ogTitle: () => `${p.value.name} · Dia’s Taste`,
   ogDescription: () => p.value.tagline,
   ogUrl: () => url.value,
@@ -29,7 +29,7 @@ useHead({
       description: p.value.description,
       image: `${config.public.siteUrl}${p.value.image}`,
       brand: { '@type': 'Brand', name: 'Dia’s Taste' },
-      ...(p.value.price != null && { offers: { '@type': 'Offer', price: p.value.price, priceCurrency: 'PKR', availability: 'https://schema.org/InStock', url: url.value } }),
+      ...(p.value.price != null && { offers: p.value.sizes.filter((s) => s.price != null).map((s) => ({ '@type': 'Offer', name: s.label, price: s.price, priceCurrency: 'PKR', availability: 'https://schema.org/InStock', url: url.value })) }),
     }),
   }],
 })
@@ -94,7 +94,7 @@ onBeforeUnmount(() => {
     <div class="container pd__grid">
       <div class="pd__media-wrap">
         <div class="pd__media">
-          <img v-show="view === 'photo'" :src="p.image" :alt="`${p.name} — 500 g jar`" class="pd__photo" width="400" height="530" fetchpriority="high" />
+          <img v-show="view === 'photo'" :src="p.image" :alt="`${p.name} jar`" class="pd__photo" width="400" height="530" fetchpriority="high" />
           <div v-show="view === '3d'" class="pd__three">
             <model-viewer
               v-if="ready"
@@ -151,7 +151,10 @@ onBeforeUnmount(() => {
 
         <div class="pd__buy pd__anim">
           <div>
-            <p class="pd__price">{{ formatPrice(p) }}</p>
+            <ul v-if="p.price != null" class="pd__sizes">
+              <li v-for="s in p.sizes" :key="s.label"><span>{{ s.label }}</span><strong class="display">{{ s.price != null ? rs(s.price) : 'Ask' }}</strong></li>
+            </ul>
+            <p v-else class="pd__price">{{ formatPrice(p) }}</p>
             <a :href="WHATSAPP_TEL" target="_blank" rel="noopener" class="pd__num"><AppIcon name="whatsapp" /> {{ WHATSAPP_DISPLAY }}</a>
           </div>
           <a :href="WHATSAPP_URL" target="_blank" rel="noopener" class="btn btn--wa"><AppIcon name="whatsapp" /> Order on WhatsApp</a>
@@ -331,6 +334,31 @@ onBeforeUnmount(() => {
 .pd__price {
   font-family: var(--font-display);
   font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--d);
+}
+.pd__sizes {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.pd__sizes li {
+  display: grid;
+  gap: 2px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--d) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--d) 14%, transparent);
+}
+.pd__sizes span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--d) 70%, transparent);
+}
+.pd__sizes strong {
+  font-size: 1.3rem;
   font-weight: 600;
   color: var(--d);
 }

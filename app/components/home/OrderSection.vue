@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
-import { products } from '~/data/products'
+import { products, countWord } from '~/data/products'
+const mid = (products.length - 1) / 2
 
-/* The flavour shelf (the fanned five-jar row) + a compact order card.
+/* The flavour shelf (the fanned row of jars) + a compact order card.
    Hover / first tap on a jar: it straightens and lifts, a leader line rises to
    a tag with the flavour and its ingredients, and the photo is swapped for a
    turning 3D model once that model has loaded (photo returns on leave). */
@@ -25,7 +26,7 @@ onMounted(async () => {
     gsap.fromTo(stageState, { opacity: 1 }, { opacity: 0, ease: 'none', immediateRender: false, scrollTrigger: { trigger: root.value, start: 'top 92%', end: 'top 40%', scrub: true } })
     gsap.from('.fs__head > *', { y: 30, opacity: 0, stagger: 0.08, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: root.value, start: 'top 80%', once: true } })
     gsap.utils.toArray<HTMLElement>('.od__slot').forEach((el, i) => {
-      gsap.fromTo(el, { y: 140 + Math.abs(i - 2) * 40 }, { y: 0, ease: 'none', scrollTrigger: { trigger: '.od__jars', start: 'top bottom', end: 'top 40%', scrub: true } })
+      gsap.fromTo(el, { y: 140 + Math.abs(i - mid) * 40 }, { y: 0, ease: 'none', scrollTrigger: { trigger: '.od__jars', start: 'top bottom', end: 'top 40%', scrub: true } })
     })
   }, root.value)
 })
@@ -36,7 +37,7 @@ onBeforeUnmount(() => ctx?.revert())
   <section id="flavours" ref="root" class="fs cover" aria-labelledby="fs-title">
     <div class="container fs__head">
       <p class="eyebrow fs__eyebrow"><span>02</span> The flavours</p>
-      <h2 id="fs-title" class="display fs__title">Five jars. <em>One kitchen.</em></h2>
+      <h2 id="fs-title" class="display fs__title">{{ countWord() }} jars. <em>One kitchen.</em></h2>
       <p class="fs__sub">{{ touch ? 'Tap a jar to meet it — tap its card for details.' : 'Hover a jar to meet it — click for details.' }}</p>
     </div>
 
@@ -46,7 +47,7 @@ onBeforeUnmount(() => ctx?.revert())
         :key="p.slug"
         class="od__slot"
         :class="{ on: hover === i, dim: hover !== null && hover !== i, 'edge-l': i === 0, 'edge-r': i === products.length - 1 }"
-        :style="{ '--a': p.color.accent, '--d': p.color.deep, '--r': `${(i - 2) * 6}deg`, zIndex: hover === i ? 10 : 5 - Math.abs(i - 2) }"
+        :style="{ '--a': p.color.accent, '--d': p.color.deep, '--r': `${(i - mid) * 6}deg`, zIndex: hover === i ? 10 : 5 - Math.abs(i - mid) }"
         @pointerenter="!touch && enter(i)"
       >
         <NuxtLink :to="`/chutney/${p.slug}`" class="od__tag" :tabindex="hover === i ? 0 : -1">

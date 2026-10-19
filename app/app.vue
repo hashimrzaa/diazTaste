@@ -11,11 +11,12 @@ const curtain = ref<HTMLElement>()
    page curtain, splash panel) follows the flavour in focus: the product on a
    product page, otherwise the hero's selected flavour. */
 const heroFlavour = useHeroFlavour()
+const isAdmin = computed(() => route.path.startsWith('/admin'))
 watch(() => route.params.slug, (slug) => {
   const i = products.findIndex((p) => p.slug === slug)
   if (i >= 0) heroFlavour.value = i
 }, { immediate: true })
-const accent = computed(() => products[heroFlavour.value]?.color ?? products[2]!.color)
+const accent = computed(() => products[heroFlavour.value]?.color ?? products[0]!.color)
 useHead({ htmlAttrs: { style: computed(() => `--chili: ${accent.value.accent}; --chili-deep: ${accent.value.deep}`) } })
 
 onMounted(async () => {
@@ -90,13 +91,13 @@ const transition = {
   <a class="skip-link" href="#main">Skip to content</a>
   <!-- Single backdrop behind the WebGL canvas; sections tint it on scroll. -->
   <div id="backdrop" aria-hidden="true" />
-  <AppSplash />
-  <AppHeader />
+  <AppSplash v-if="!isAdmin" />
+  <AppHeader v-if="!isAdmin" />
   <main id="main">
     <NuxtPage :transition="transition" />
   </main>
-  <AppFooter />
-  <ClientOnly>
+  <AppFooter v-if="!isAdmin" />
+  <ClientOnly v-if="!isAdmin">
     <ArViewer />
   </ClientOnly>
   <div ref="curtain" class="curtain" aria-hidden="true">
