@@ -35,6 +35,8 @@ export interface CatalogProduct {
 }
 
 export interface Catalog {
+  /** flavour the site opens on (hero, accent colour); falls back to the first visible */
+  defaultSlug?: string
   products: CatalogProduct[]
 }
 
@@ -62,8 +64,8 @@ const derive = (p: CatalogProduct): Product => {
 export const allProducts: Product[] = (catalog as Catalog).products.map(derive)
 export const products: Product[] = allProducts.filter((p) => !p.hidden)
 
-/** Hero opens on Aloo Bukhara when it is visible, otherwise the first flavour. */
-export const DEFAULT_FLAVOUR = Math.max(0, products.findIndex((p) => p.slug === 'aloo-bukhara'))
+/** Index (in the visible list) of the flavour the site opens on — set in /admin. */
+export const DEFAULT_FLAVOUR = Math.max(0, products.findIndex((p) => p.slug === ((catalog as Catalog).defaultSlug ?? 'aloo-bukhara')))
 
 export const getProduct = (slug: string) => products.find((p) => p.slug === slug)
 

@@ -138,7 +138,12 @@ export function sanitizeCatalog(input: unknown, current: Catalog): Catalog {
   const incoming = (input as Catalog)?.products
   if (!Array.isArray(incoming)) throw createError({ statusCode: 400, statusMessage: 'Bad data.' })
   const bySlug = new Map(incoming.map((p) => [p?.slug, p]))
-  const products = current.products.map((old): CatalogProduct => {
+  // keep the order the admin chose; any product missing from the request stays, at the end
+  const known = new Map(current.products.map((p) => [p.slug, p]))
+  const order = [...new Set(incoming.map((p) => p?.slug).filter((s): s is string => known.has(s)))]
+  for (const p of current.products) if (!order.includes(p.slug)) order.push(p.slug)
+  const products = order.map((slug): CatalogProduct => {
+    const old = known.get(slug)!
     const p = bySlug.get(old.slug) as Partial<CatalogProduct> | undefined
     if (!p) return old
     const label = p.name ? String(p.name) : old.name
@@ -176,5 +181,7 @@ export function sanitizeCatalog(input: unknown, current: Catalog): Catalog {
     }
   })
   if (products.every((p) => p.hidden)) throw createError({ statusCode: 400, statusMessage: 'At least one product must stay visible.' })
-  return { products }
+  const want = (input as Catalog).defaultSlug ?? current.defaultSlug ?? 'aloo-bukhara'
+  const defaultSlug = products.find((p) => p.slug === want && !p.hidden)?.slug ?? products.find((p) => !p.hidden)!.slug
+  return { defaultSlug, products }
 }

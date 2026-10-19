@@ -15,6 +15,7 @@ const loginError = ref('')
 const busy = ref(false)
 const items = ref<Editable[]>([])
 const sha = ref<string>()
+const defaultSlug = ref<string>()
 const saved = ref('') // JSON of the last saved state, for the “unsaved” check
 const open = ref<string | null>(null)
 const msg = ref<{ kind: 'ok' | 'err'; text: string; url?: string } | null>(null)
@@ -30,6 +31,7 @@ const toEditable = (p: CatalogProduct): Editable => ({
   _steps: p.recipe.steps.join('\n'),
 })
 const toCatalog = (): Catalog => ({
+  defaultSlug: defaultSlug.value,
   products: items.value.map(({ _ingredients, _allergens, _pairs, _steps, ...p }) => ({
     ...p,
     ingredients: lines(_ingredients),
@@ -55,6 +57,7 @@ async function loadCatalog() {
     throw e
   })
   items.value = r.catalog.products.map(toEditable)
+  defaultSlug.value = [r.catalog.defaultSlug ?? 'aloo-bukhara'].find((s) => r.catalog.products.some((p) => p.slug === s && !p.hidden)) ?? r.catalog.products.find((p) => !p.hidden)?.slug
   sha.value = r.sha
   saved.value = JSON.stringify(toCatalog())
 }
@@ -81,12 +84,16 @@ async function save() {
   busy.value = true
   msg.value = null
   try {
-    const changed = items.value.filter((p, i) => JSON.stringify(toCatalog().products[i]) !== JSON.stringify((JSON.parse(saved.value) as Catalog).products[i])).map((p) => p.short)
+    const before = new Map((JSON.parse(saved.value) as Catalog).products.map((x) => [x.slug, JSON.stringify(x)]))
+    const now = toCatalog()
+    const changed = now.products.filter((x) => before.get(x.slug) !== JSON.stringify(x)).map((x) => x.short)
+    if (now.products.map((x) => x.slug).join() !== [...before.keys()].join()) changed.push('order')
     const r = await $fetch<{ commit: string; url: string; sha?: string; catalog: Catalog }>('/api/admin/catalog', {
       method: 'PUT',
       body: { catalog: toCatalog(), sha: sha.value, note: changed.length ? `update ${changed.join(', ')}` : undefined },
     })
     items.value = r.catalog.products.map(toEditable)
+    defaultSlug.value = r.catalog.defaultSlug
     sha.value = r.sha
     saved.value = JSON.stringify(toCatalog())
     msg.value = r.commit === 'local'
@@ -133,7 +140,9 @@ function move(i: number, d: number) {
   ;[a[i], a[j]] = [a[j]!, a[i]!]
 }
 function revert() {
-  items.value = (JSON.parse(saved.value) as Catalog).products.map(toEditable)
+  const c = JSON.parse(saved.value) as Catalog
+  items.value = c.products.map(toEditable)
+  defaultSlug.value = c.defaultSlug
   msg.value = null
 }
 
@@ -200,10 +209,14 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn))
             </span>
             <span class="ad__chev" aria-hidden="true">▾</span>
           </button>
-          <div class="ad__order">
+          <div class="ad__order" title="Order on the site">
             <button :disabled="i === 0" aria-label="Move up" @click="move(i, -1)">↑</button>
             <button :disabled="i === items.length - 1" aria-label="Move down" @click="move(i, 1)">↓</button>
           </div>
+          <label class="ad__def" :class="{ on: defaultSlug === p.slug }" :title="p.hidden ? 'Hidden products can’t be the default' : 'The site opens on this flavour'">
+            <input v-model="defaultSlug" type="radio" name="default-flavour" :value="p.slug" :disabled="p.hidden" />
+            <span>{{ defaultSlug === p.slug ? '★ Default' : 'Set default' }}</span>
+          </label>
           <label class="ad__switch" :title="p.hidden ? 'Hidden from the site' : 'Showing on the site'">
             <input v-model="p.hidden" type="checkbox" :true-value="false" :false-value="true" />
             <span class="ad__track"><span /></span>
@@ -327,6 +340,12 @@ code { font-size: 0.85em; padding: 1px 5px; border-radius: 5px; background: rgba
 .ad__order button:hover:not(:disabled) { background: rgba(30, 15, 10, 0.06); }
 .ad__order button:disabled { opacity: 0.25; }
 
+.ad__def { position: relative; display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 99px; font-size: 0.78rem; font-weight: 700; color: var(--ink-3); box-shadow: inset 0 0 0 1px var(--line); cursor: pointer; white-space: nowrap; }
+.ad__def input { position: absolute; opacity: 0; pointer-events: none; }
+.ad__def:hover { color: var(--ink); }
+.ad__def.on { background: var(--a); color: #fff; box-shadow: none; }
+.ad__def:has(input:disabled) { opacity: 0.35; cursor: not-allowed; }
+.ad__def:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
 .ad__switch { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
 .ad__switch input { position: absolute; opacity: 0; pointer-events: none; }
 .ad__track { position: relative; width: 42px; height: 24px; border-radius: 99px; background: #cbbfb3; transition: background 0.25s; }
@@ -397,7 +416,9 @@ input:focus, textarea:focus { outline: 2px solid var(--a, var(--ink)); outline-o
   .ad__photo img { grid-row: span 2; }
   .ad__colours { grid-template-columns: 1fr 1fr; }
   .ad__size { grid-template-columns: 1fr auto 1fr auto; }
-  .ad__order { display: none; }
+  .ad__row { flex-wrap: wrap; }
+  .ad__head { flex-basis: 100%; }
+  .ad__def { margin-right: auto; }
   .ad__switch em { display: none; }
   .ad__bar { flex-direction: column; align-items: stretch; gap: 10px; padding: 14px; }
   .ad__actions { justify-content: flex-end; }
