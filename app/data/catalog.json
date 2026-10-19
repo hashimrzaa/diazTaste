@@ -223,7 +223,7 @@
     },
     {
       "slug": "khajoor",
-      "hidden": false,
+      "hidden": true,
       "name": "Khajoor Chutney",
       "short": "Khajoor",
       "urdu": "Khajoor",
