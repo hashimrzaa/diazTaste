@@ -1,5 +1,61 @@
 {
+  "defaultSlug": "garlic",
   "products": [
+    {
+      "slug": "garlic",
+      "hidden": false,
+      "name": "Garlic Chutney",
+      "short": "Garlic",
+      "urdu": "Lehsan",
+      "tagline": "Fiery, garlicky, unapologetic.",
+      "description": "Whole garlic pounded with sun-dried red chillies and crushed chilli flakes into a coarse, glossy paste. Bold enough for parathas at breakfast, brave enough for anything grilled.",
+      "sizes": [
+        {
+          "label": "250 g",
+          "price": 400
+        },
+        {
+          "label": "500 g",
+          "price": 700
+        }
+      ],
+      "ingredients": [
+        "Garlic",
+        "Dried red chillies",
+        "Chilli flakes",
+        "Vinegar",
+        "Oil",
+        "Salt"
+      ],
+      "allergens": [],
+      "pairs": [
+        "Aloo paratha",
+        "Grilled chicken",
+        "Fries",
+        "Daal chawal"
+      ],
+      "taste": {
+        "sweet": 1,
+        "tangy": 2,
+        "heat": 5
+      },
+      "recipe": {
+        "title": "Garlic chutney paratha",
+        "steps": [
+          "Roll out a paratha",
+          "Brush with Garlic Chutney & ghee",
+          "Fold, roast golden, serve with dahi"
+        ]
+      },
+      "image": "/images/garlic.webp",
+      "model": "/models/garlic.r3.glb",
+      "color": {
+        "accent": "#D9381E",
+        "deep": "#5C1208",
+        "tint": "#FADCCD",
+        "ink": "#3A0C05"
+      }
+    },
     {
       "slug": "green",
       "hidden": false,
@@ -54,61 +110,6 @@
         "deep": "#1F3D0C",
         "tint": "#E4EFD2",
         "ink": "#16260A"
-      }
-    },
-    {
-      "slug": "garlic",
-      "hidden": false,
-      "name": "Garlic Chutney",
-      "short": "Garlic",
-      "urdu": "Lehsan",
-      "tagline": "Fiery, garlicky, unapologetic.",
-      "description": "Whole garlic pounded with sun-dried red chillies and crushed chilli flakes into a coarse, glossy paste. Bold enough for parathas at breakfast, brave enough for anything grilled.",
-      "sizes": [
-        {
-          "label": "250 g",
-          "price": 400
-        },
-        {
-          "label": "500 g",
-          "price": 700
-        }
-      ],
-      "ingredients": [
-        "Garlic",
-        "Dried red chillies",
-        "Chilli flakes",
-        "Vinegar",
-        "Oil",
-        "Salt"
-      ],
-      "allergens": [],
-      "pairs": [
-        "Aloo paratha",
-        "Grilled chicken",
-        "Fries",
-        "Daal chawal"
-      ],
-      "taste": {
-        "sweet": 1,
-        "tangy": 2,
-        "heat": 5
-      },
-      "recipe": {
-        "title": "Garlic chutney paratha",
-        "steps": [
-          "Roll out a paratha",
-          "Brush with Garlic Chutney & ghee",
-          "Fold, roast golden, serve with dahi"
-        ]
-      },
-      "image": "/images/garlic.webp",
-      "model": "/models/garlic.r3.glb",
-      "color": {
-        "accent": "#D9381E",
-        "deep": "#5C1208",
-        "tint": "#FADCCD",
-        "ink": "#3A0C05"
       }
     },
     {
