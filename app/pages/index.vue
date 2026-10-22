@@ -38,5 +38,7 @@ useHead({
     </ClientOnly>
     <HomeHeroSection />
     <HomeOrderSection />
+    <HomeTestimonialsSection />
+    <HomeContactSection />
   </div>
 </template>

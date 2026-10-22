@@ -17,6 +17,8 @@ const links = [
   { label: 'Home', to: '/' },
   { label: 'Flavours', to: '/flavours' },
   { label: 'Order', to: '/#order' },
+  { label: 'Reviews', to: '/#reviews' },
+  { label: 'Custom orders', to: '/#contact' },
 ]
 
 function close() { open.value = false }

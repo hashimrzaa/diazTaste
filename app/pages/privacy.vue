@@ -6,7 +6,7 @@ import { WHATSAPP_URL } from '~/data/products'
   <LegalPage
     title="Privacy policy"
     description="How Dia’s Taste handles your personal information — no tracking, no ads, camera stays on your device."
-    updated="15 October 2026"
+    updated="22 October 2026"
     path="/privacy"
   >
     <p>
@@ -16,7 +16,8 @@ import { WHATSAPP_URL } from '~/data/products'
 
     <h2>The short version</h2>
     <ul>
-      <li>This website has no user accounts, no forms, no analytics, no advertising and no tracking cookies.</li>
+      <li>This website has no user accounts, no analytics, no advertising and no tracking cookies.</li>
+      <li>If you send us a review or a custom-order request, we keep only what you type into the form.</li>
       <li>Fonts, 3D models and code are served from our own server — your visit is not shared with font or ad networks.</li>
       <li>The camera and AR features run on your device. We never receive, record or store your camera feed.</li>
       <li>When you order on WhatsApp, we use your details only to prepare and deliver your order.</li>
@@ -32,6 +33,16 @@ import { WHATSAPP_URL } from '~/data/products'
       <strong>Orders and messages.</strong> When you message us on WhatsApp we receive your name, phone number and
       whatever you choose to share — typically your order, delivery address and any notes. We use this information to
       confirm, prepare, deliver and, if needed, follow up on your order.
+    </p>
+    <p>
+      <strong>Reviews.</strong> When you write a review we store your name, city (if given), rating, the flavour and
+      your words. We read every review before publishing it; once published, your name, city and review are shown on
+      this site. Ask us any time to remove it.
+    </p>
+    <p>
+      <strong>Custom-order requests.</strong> The “Something special?” form sends us your name, phone number, email
+      (if given) and request. We use them only to reply and to prepare that order, and delete the request once it is
+      no longer needed.
     </p>
 
     <h2>Camera and augmented reality</h2>
