@@ -176,7 +176,7 @@ onBeforeUnmount(() => {
           <ul class="pd__pairs"><li v-for="x in p.pairs" :key="x"><AppIcon name="check" /> {{ x }}</li></ul>
         </div>
         <div class="pd__block pd__care pd__anim">
-          <p><AppIcon name="fridge" /> <span><strong>Keep refrigerated</strong> after opening.</span></p>
+          <p><AppIcon name="fridge" /> <span><strong>Keep refrigerated</p>
           <p><AppIcon name="leaf" /> <span><strong>No additives</strong> or preservatives.</span></p>
         </div>
       </article>
