@@ -15,7 +15,7 @@ useSeoMeta({
 })
 // Warm the default hero model early, but only where WebGL can actually use it
 // (a blocked GPU would otherwise trigger an "unused preload" warning).
-const PRELOAD_HERO = `(function(){try{var c=document.createElement('canvas'),g=c.getContext('webgl2')||c.getContext('webgl');if(!g)return;var x=g.getExtension('WEBGL_lose_context');x&&x.loseContext();var l=document.createElement('link');l.rel='preload';l.as='fetch';l.crossOrigin='anonymous';l.href='/models/${products[DEFAULT_FLAVOUR]!.slug}.hero.glb';document.head.appendChild(l)}catch(e){}})()`
+const PRELOAD_HERO = `(function(){try{var c=document.createElement('canvas'),g=c.getContext('webgl2')||c.getContext('webgl');if(!g)return;var d=g.getExtension('WEBGL_debug_renderer_info'),r=String(d&&g.getParameter(d.UNMASKED_RENDERER_WEBGL)||g.getParameter(g.RENDERER)||'');if(/swiftshader|llvmpipe|softpipe|software|basic render/i.test(r))return;var x=g.getExtension('WEBGL_lose_context');x&&x.loseContext();var l=document.createElement('link');l.rel='preload';l.as='fetch';l.crossOrigin='anonymous';l.href='/models/${products[DEFAULT_FLAVOUR]!.slug}.hero.glb';document.head.appendChild(l)}catch(e){}})()`
 useHead({
   link: [{ rel: 'canonical', href: config.public.siteUrl }],
   script: [{ innerHTML: PRELOAD_HERO, tagPosition: 'head' }, {

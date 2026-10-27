@@ -9,6 +9,7 @@ import { WHATSAPP_URL } from '~/data/products'
    pointer and catches a moving sheen. Esc, the ✕ or the backdrop closes it,
    and the card flies back into the corner. */
 const SRC = '/images/price-list.webp'
+const THUMB = '/images/price-list-thumb.webp' // the docked card only needs a tiny copy
 const introDone = useIntroDone()
 const open = ref(false)
 const thumb = ref<HTMLElement>()
@@ -96,7 +97,7 @@ onBeforeUnmount(() => {
       <span class="pl__tag"><AppIcon name="sparkle" /> Price list</span>
       <span class="pl__stack" aria-hidden="true">
         <span class="pl__ghost" />
-        <img :src="SRC" alt="" width="1024" height="1536" loading="lazy" decoding="async" class="pl__mini" />
+        <img :src="THUMB" alt="" width="240" height="360" loading="lazy" decoding="async" class="pl__mini" />
       </span>
     </button>
 

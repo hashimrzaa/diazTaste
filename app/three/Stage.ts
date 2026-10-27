@@ -87,40 +87,54 @@ export class Stage {
     window.addEventListener('pointermove', this.onPointer, { passive: true })
   }
 
-  /** Loads the FIRST model (that is what the splash waits for), starts
-   *  rendering, then streams the remaining models in the background in order. */
+  private fetchOne?: (url: string, report?: (p: number) => void) => Promise<THREE.Group>
+  private shadowTex?: THREE.Texture
+  private pending = new Map<number, Promise<void>>()
+
+  /** Loads one model on demand (deduped). Used for the first jar, for the
+   *  background stream, and whenever the visitor picks a flavour that hasn't
+   *  arrived yet. */
+  ensure(i: number, report?: (p: number) => void): Promise<void> {
+    if (this.jars[i] || !this.models[i] || !this.fetchOne) return Promise.resolve()
+    let p = this.pending.get(i)
+    if (!p) {
+      p = this.fetchOne(this.models[i]!.url, report).then((g) => {
+        if (!this.disposed && !this.jars[i]) this.jars[i] = this.prepareJar(g, this.shadowTex!)
+      }, (e) => { console.warn('[stage] model failed', this.models[i]!.url, e); this.pending.delete(i) })
+      this.pending.set(i, p)
+    }
+    return p
+  }
+
+  /** Loads ONLY the first model (that is what the splash waits for) and starts
+   *  rendering. The other flavours are fetched once the page has settled, or
+   *  straight away if the visitor asks for one — so the first visit downloads
+   *  one jar, not all of them. */
   async load(onProgress?: (p: number) => void, firstIndex = 0) {
     const fi = Math.min(Math.max(0, firstIndex), this.models.length - 1)
     const draco = new DRACOLoader().setDecoderPath('/draco/')
     const loader = new GLTFLoader().setDRACOLoader(draco)
-    const shadowTex = this.makeShadowTexture()
-    const fetchOne = (url: string, report?: (p: number) => void) =>
+    this.shadowTex = this.makeShadowTexture()
+    this.fetchOne = (url, report) =>
       new Promise<THREE.Group>((resolve, reject) =>
         loader.load(url, (g) => resolve(g.scene), (e) => { if (e.total && report) report(Math.min(0.99, e.loaded / e.total)) }, reject),
       )
 
-    const first = await fetchOne(this.models[fi]!.url, onProgress)
-    if (this.disposed) return
-    this.jars[fi] = this.prepareJar(first, shadowTex)
+    await this.ensure(fi, onProgress)
+    if (this.disposed || !this.jars[fi]) return
     this.ingredientSets = createIngredientSets(this.models.map((m) => m.slug))
     this.ingredientSets.forEach((s) => this.rig.add(s.group))
-    this.renderer.compile(this.scene, this.camera)
+    await this.renderer.compileAsync(this.scene, this.camera) // parallel shader compile: no multi-second freeze
+    if (this.disposed) return
     this.resize()
     this.renderer.setAnimationLoop(this.tick)
     onProgress?.(1)
 
-    for (const [i, m] of this.models.entries()) {
-      if (i === fi) continue
-      try {
-        const g = await fetchOne(m.url)
-        if (this.disposed) return
-        this.jars[i] = this.prepareJar(g, shadowTex)
-      } catch (e) {
-        console.warn('[stage] model failed', m.url, e)
-        break
-      }
-    }
-    draco.dispose()
+    // the rest, one by one, after the page has gone quiet
+    const idle = (cb: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(cb, { timeout: 4000 }) : setTimeout(cb, 200))
+    setTimeout(() => idle(async () => {
+      for (let i = 0; i < this.models.length && !this.disposed; i++) await this.ensure(i)
+    }), 6000)
   }
 
 
@@ -266,6 +280,11 @@ export class Stage {
     st.setProperty('--jar-h', `${h.toFixed(1)}px`)
     st.setProperty('--jar-x', `${x.toFixed(1)}px`)
     st.setProperty('--jar-y', `${y.toFixed(1)}px`)
+    // unitless copies: the hero moves its disc with translate/scale (no layout
+    // work, no layout shift) and needs plain numbers to compute the scale
+    st.setProperty('--jar-xn', x.toFixed(1))
+    st.setProperty('--jar-yn', y.toFixed(1))
+    st.setProperty('--jar-hn', h.toFixed(1))
   }
 
   /** Visible world size at the jar plane for a given camera distance. */
@@ -284,6 +303,7 @@ export class Stage {
 
     // flavours switch as a cut (behind a quick fade), never by flying through other jars
     C.flavour = S.flavour
+    if (!this.jars[Math.round(S.flavour)]) void this.ensure(Math.round(S.flavour))
     for (const k of Object.keys(S) as (keyof StageState)[]) {
       C[k] = damp(C[k], S[k], k === 'flavour' || k === 'lineup' ? 5 : 7, dt)
     }

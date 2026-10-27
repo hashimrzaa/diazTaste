@@ -35,7 +35,12 @@ export function hasWebGL() {
     try {
       const c = document.createElement('canvas')
       const gl = (c.getContext('webgl2') || c.getContext('webgl')) as WebGLRenderingContext | null
-      glProbe = !!gl
+      // A CPU-emulated GPU (SwiftShader, llvmpipe, “Microsoft Basic Render”)
+      // runs the 3D scene on the main thread and freezes the page, so those
+      // machines get the photo version too. Same check Nuxt's own loader uses.
+      const info = gl?.getExtension('WEBGL_debug_renderer_info')
+      const renderer = String((info && gl!.getParameter(info.UNMASKED_RENDERER_WEBGL)) || gl?.getParameter(gl.RENDERER) || '')
+      glProbe = !!gl && !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer)
       gl?.getExtension('WEBGL_lose_context')?.loseContext()
     } catch {
       glProbe = false
@@ -45,3 +50,5 @@ export function hasWebGL() {
 }
 /** Set when the 3D stage could not start; pages swap in still images. */
 export const useNoWebGL = () => useState('no-webgl', () => false)
+/** True once the 3D jar is on screen; until then the hero shows the photo. */
+export const useStageReady = () => useState('stage-ready', () => false)

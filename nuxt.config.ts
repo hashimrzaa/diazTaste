@@ -46,6 +46,20 @@ export default defineNuxtConfig({
     // admin is a client-side app behind a password; never prerendered or indexed
     '/admin': { ssr: false, headers: { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } },
     '/api/**': { headers: { 'Cache-Control': 'no-store' } },
+    // heavy static assets: cache for a month, refresh quietly in the background
+    '/models/**': { headers: { 'Cache-Control': 'public, max-age=2592000, stale-while-revalidate=86400' } },
+    '/draco/**': { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+    '/images/**': { headers: { 'Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400' } },
+    '/brand/**': { headers: { 'Cache-Control': 'public, max-age=604800, stale-while-revalidate=86400' } },
+  },
+
+  hooks: {
+    // Don't <link rel="prefetch"> every lazily-imported chunk on every page:
+    // that pulled three.js and model-viewer (~1 MB) even where they're never
+    // used. They still load the moment a page actually imports them.
+    'build:manifest'(manifest) {
+      for (const key in manifest) manifest[key]!.dynamicImports = []
+    },
   },
 
   // Pages render on request (not prerendered) so products and reviews edited in

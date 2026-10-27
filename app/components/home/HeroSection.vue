@@ -16,6 +16,25 @@ const introDone = useIntroDone()
 const progress = useLoadProgress()
 const active = useHeroFlavour()
 const noWebGL = useNoWebGL()
+const stageReady = useStageReady()
+/** photo stand-in: no WebGL at all, or the 3D jar is still on its way */
+const still = computed(() => noWebGL.value || !stageReady.value)
+/* The disc and hit area sit at a fixed anchor (their CSS box never moves) and
+   follow the 3D jar only through translate/scale — so tracking the jar every
+   frame costs no layout and never counts as a layout shift. */
+const anchor = reactive({ ax: 0, ay: 0, dn: 0 })
+function measure() {
+  const d = root.value?.querySelector<HTMLElement>('.hx__disc')
+  if (d) Object.assign(anchor, { ax: d.offsetLeft, ay: d.offsetTop, dn: d.offsetWidth })
+}
+const anchorVars = computed(() => ({
+  '--ax': anchor.ax,
+  '--ay': anchor.ay,
+  '--dn': anchor.dn || 1,
+  // photo mode: pretend the jar sits exactly on the anchor
+  ...(still.value && { '--jar-xn': anchor.ax, '--jar-yn': anchor.ay, '--jar-hn': anchor.dn * (isMobile() ? 0.86 : 0.8) }),
+}))
+let ro: ResizeObserver | undefined
 const p = computed(() => products[active.value]!)
 const callouts = computed(() => p.value.ingredients.slice(0, 4).map((k, i) => ({ k: k.replace(/\s*\(.*?\)/g, ''), pos: ['tl', 'tr', 'bl', 'br'][i]! })))
 let ctx: gsap.Context | undefined
@@ -87,20 +106,25 @@ onMounted(() => {
         .fromTo(stageState, { spin: 0 }, { spin: Math.PI * 2, duration: 1, ease: 'power1.inOut', immediateRender: false }, 0)
     })
   }, root.value)
+  measure()
+  ro = new ResizeObserver(measure)
+  ro.observe(root.value!.querySelector('.hx__back')!)
   const ready = () => introDone.value && progress.value >= 1
   if (ready()) intro()
   else {
     const stop = watch([introDone, progress], () => { if (ready()) { stop(); intro() } })
   }
 })
-onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.revert() })
+onBeforeUnmount(() => { ro?.disconnect(); floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.revert() })
 </script>
 
 <template>
-  <section id="top" ref="root" class="hx" :class="{ nogl: noWebGL }" :style="{ '--a': p.color.accent, '--d': p.color.deep, '--t': p.color.tint }" aria-labelledby="hx-title">
+  <section id="top" ref="root" class="hx" :class="{ nogl: still }" :style="{ '--a': p.color.accent, '--d': p.color.deep, '--t': p.color.tint, ...anchorVars }" aria-labelledby="hx-title">
     <div class="hx__back">
       <div class="hx__disc" aria-hidden="true"><span class="hx__glow" /></div>
-      <img v-if="noWebGL" :key="p.slug" :src="p.image" :alt="`${p.name} jar`" class="hx__still" width="400" height="530" />
+      <Transition name="still">
+        <img v-if="still" :key="p.slug" :src="p.image" :alt="`${p.name} jar`" class="hx__still" width="400" height="530" fetchpriority="high" />
+      </Transition>
     </div>
 
     <div class="hx__front">
@@ -168,14 +192,17 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
 .hx__front { z-index: 3; margin-top: -100vh; margin-top: -100svh; pointer-events: none; }
 .hx__front a, .hx__front button { pointer-events: auto; }
 
-.hx__disc { position: absolute; left: var(--jar-x, 50%); top: var(--jar-y, 52%); width: calc(var(--jar-h, calc(var(--D) * 0.8)) * 1.26); aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; overflow: hidden;
+.hx__disc { position: absolute; left: 50%; top: 52%; width: var(--D); aspect-ratio: 1;
+  translate: calc(-50% + (var(--jar-xn, var(--ax, 0)) - var(--ax, 0)) * 1px) calc(-50% + (var(--jar-yn, var(--ay, 0)) - var(--ay, 0)) * 1px);
+  scale: calc(var(--jar-hn, calc(var(--dn, 1) * 0.8)) * 1.26 / var(--dn, 1)); border-radius: 50%; overflow: hidden;
   background: radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 45%, color-mix(in srgb, var(--a) 35%, var(--t)) 100%);
   box-shadow: 0 40px 90px -50px color-mix(in srgb, var(--a) 70%, transparent); transition: background 0.8s var(--ease-out), box-shadow 0.8s; }
 .hx__glow { position: absolute; left: 30%; top: 25%; width: 70%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, 0.7), transparent 70%); animation: glow 8s ease-in-out infinite alternate; }
 /* no WebGL: a still photo of the jar stands in for the 3D one */
-.hx.nogl { --jar-h: calc(var(--D) * 0.8); --jar-x: 50%; --jar-y: 52%; }
-.hx__still { position: absolute; left: var(--jar-x); top: var(--jar-y); height: calc(var(--jar-h) * 1.08); width: auto; translate: -50% -50%; object-fit: contain; filter: drop-shadow(0 30px 30px rgba(30, 15, 10, 0.25)); animation: still-in 0.8s var(--ease-out); }
+.hx__still { position: absolute; left: 50%; top: 52%; height: calc(var(--D) * 0.864); width: auto; translate: -50% -50%; object-fit: contain; filter: drop-shadow(0 30px 30px rgba(30, 15, 10, 0.25)); animation: still-in 0.8s var(--ease-out); }
 @keyframes still-in { from { opacity: 0; transform: translateY(20px); } }
+.still-leave-active { transition: opacity 0.7s ease 0.15s; }
+.still-leave-to { opacity: 0; }
 @keyframes glow { to { left: 62%; top: 40%; } }
 
 /* one straight line; each word fills its side, copy sits under it at the word's width */
@@ -228,7 +255,8 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
 
 .hx__recipe { display: none; }
 .hx__mtitle, .hx__mcopy { display: none; }
-.hx__hot { position: absolute; left: var(--jar-x, 50%); top: var(--jar-y, 52%); width: calc(var(--jar-h, var(--D)) * 0.62); height: calc(var(--jar-h, var(--D)) * 1.1); translate: -50% -50%; pointer-events: auto; cursor: grab; }
+.hx__hot { position: absolute; left: 50%; top: 52%; width: calc(var(--D) * 0.5); height: calc(var(--D) * 0.9);
+  translate: calc(-50% + (var(--jar-xn, var(--ax, 0)) - var(--ax, 0)) * 1px) calc(-50% + (var(--jar-yn, var(--ay, 0)) - var(--ay, 0)) * 1px); pointer-events: auto; cursor: grab; }
 
 .hx__callout { position: absolute; display: flex; align-items: flex-start; }
 .hx__ck { font-size: clamp(1rem, 2.8vh, 1.6rem); line-height: 1; white-space: nowrap; }
@@ -243,8 +271,8 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
 @media (max-width: 768px) {
   .hx { --D: min(38vh, 78vw); }
   .hx__row, .hx__notes { display: none; }
-  .hx__hot { top: var(--jar-y, 57%); }
-  .hx.nogl { --jar-y: 57%; --jar-h: calc(var(--D) * 0.86); }
+  .hx__disc, .hx__hot, .hx__still { top: 57%; }
+  .hx__still { height: calc(var(--D) * 0.93); }
   .hx__mtitle { display: block; position: absolute; left: 0; right: 0; top: 92px; text-align: center; font-size: clamp(2.2rem, 11vw, 3rem); font-weight: 800; letter-spacing: -0.04em; }
   .hx__mtitle span { color: var(--a); transition: color 0.6s; }
   .hx__recipe { display: grid; gap: 4px; position: absolute; left: var(--gutter); right: var(--gutter); top: 150px; padding: 12px 16px; border-radius: 18px; background: #fff; box-shadow: 0 16px 36px -24px rgba(30, 15, 10, 0.4), inset 0 0 0 1px var(--line); border-left: 5px solid var(--a); }
@@ -260,8 +288,8 @@ onBeforeUnmount(() => { floatTl?.kill(); split.forEach((s) => s.revert()); ctx?.
   .hx__callout { flex-direction: column; gap: 6px; }
   .hx__callout .hx__arr { width: 64px; margin: 0; }
   .hx__callout .hx__ck { font-size: 0.8rem; }
-  .p-tl, .p-tr { top: calc(var(--jar-y, 57%) - var(--jar-h, 150px) * 0.42); }
-  .p-bl, .p-br { top: calc(var(--jar-y, 57%) + var(--jar-h, 150px) * 0.08); flex-direction: column-reverse; }
+  .p-tl, .p-tr { top: 57%; translate: 0 calc((var(--jar-yn, var(--ay, 0)) - var(--ay, 0) - var(--jar-hn, 150) * 0.42) * 1px); }
+  .p-bl, .p-br { top: 57%; translate: 0 calc((var(--jar-yn, var(--ay, 0)) - var(--ay, 0) + var(--jar-hn, 150) * 0.08) * 1px); flex-direction: column-reverse; }
   .p-tl, .p-bl { left: var(--gutter); right: auto; align-items: flex-start; }
   .p-tr, .p-br { right: var(--gutter); left: auto; align-items: flex-end; }
   .p-tl .hx__arr, .p-bl .hx__arr { margin-left: 24px; }

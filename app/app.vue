@@ -38,11 +38,11 @@ onMounted(async () => {
       refresh()
     }
   }).observe(document.getElementById('main')!)
-  // Pages without the 3D stage only wait for fonts.
-  if (route.path !== '/') {
-    await document.fonts?.ready
-    progress.value = 1
-  }
+  // The splash only waits for the fonts. The 3D jar loads behind the page
+  // (the hero shows its photo until then), so first paint isn't held hostage
+  // by ~1 MB of three.js + model on a slow phone.
+  await document.fonts?.ready
+  progress.value = 1
 })
 
 /* Page transition — a warm curtain sweeps up, the route swaps underneath. */

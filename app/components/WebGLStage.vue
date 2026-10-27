@@ -5,7 +5,7 @@ import type { Stage } from '~/three/Stage'
 const props = withDefaults(defineProps<{ only?: string[]; urls?: Record<string, string> }>(), { only: undefined, urls: undefined })
 const emit = defineEmits<{ ready: [stage: Stage]; hover: [index: number] }>()
 const canvas = ref<HTMLCanvasElement>()
-const progress = useLoadProgress()
+const stageReady = useStageReady()
 let stage: Stage | undefined
 
 const onResize = () => stage?.resize()
@@ -16,7 +16,6 @@ onMounted(async () => {
   const fail = (e?: unknown) => {
     if (e) console.warn('[stage] 3D unavailable, showing images instead', e)
     noWebGL.value = true
-    progress.value = 1
   }
   if (!hasWebGL()) return fail()
   const { Stage } = await import('~/three/Stage')
@@ -32,11 +31,14 @@ onMounted(async () => {
   stage.onHover = (i) => emit('hover', i)
   window.addEventListener('resize', onResize)
   try {
-    await stage.load((p) => (progress.value = Math.max(progress.value, p * 0.98)), props.only ? 0 : heroFlavour.value)
+    // the splash no longer waits for this: the hero shows the jar's photo
+    // until the 3D one is ready, then cross-fades
+    await stage.load(undefined, props.only ? 0 : heroFlavour.value)
+    stageReady.value = true
   } catch (e) {
     console.error('[stage] failed to load models', e)
+    noWebGL.value = true
   }
-  progress.value = 1
   emit('ready', stage)
 })
 

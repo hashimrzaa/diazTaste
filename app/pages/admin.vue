@@ -123,13 +123,14 @@ async function upload(p: Editable, e: Event) {
   const file = input.files?.[0]
   input.value = ''
   if (!file) return
-  if (file.size > 2 * 1024 * 1024) { msg.value = { kind: 'err', text: 'That image is over 2 MB. Please use a smaller one.' }; return }
   uploading.value = p.slug
   msg.value = null
   try {
+    const webp = await toWebp(file) // usually far smaller than the original
+    if (webp.size > 2 * 1024 * 1024) { msg.value = { kind: 'err', text: 'That image is over 2 MB even as WebP. Please use a smaller one.' }; return }
     const fd = new FormData()
     fd.append('slug', p.slug)
-    fd.append('file', await toWebp(file))
+    fd.append('file', webp)
     const r = await $fetch<{ path: string }>('/api/admin/upload', { method: 'POST', body: fd })
     p.image = r.path
     msg.value = { kind: 'ok', text: `New photo uploaded for ${p.short}. Press “Save & publish” to use it.` }
@@ -256,11 +257,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn))
                 {{ uploading === p.slug ? 'Uploading…' : 'Change photo' }}
                 <input type="file" accept="image/webp,image/png,image/jpeg" :disabled="!!uploading" @change="upload(p, $event)" />
               </label>
-<<<<<<< HEAD
-              <small>PNG, JPG or WebP. It’s saved as WebP automatically. Transparent background works best.</small>
-=======
-              <small>WebP or PNG with a transparent background works best. Max 2 MB.</small>
->>>>>>> 3b127c692ff58a1c04e433b2c9ed77180620bcf3
+              <small>PNG, JPG or WebP. It’s saved as WebP automatically. Transparent background works best. Max 2 MB.</small>
             </div>
 
             <div class="ad__fields">
