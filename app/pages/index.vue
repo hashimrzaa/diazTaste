@@ -37,8 +37,8 @@ useHead({
       <WebGLStage :urls="Object.fromEntries(products.map((p) => [p.slug, `/models/${p.slug}.hero.glb`]))" @ready="ScrollTrigger.refresh()" />
     </ClientOnly>
     <HomeHeroSection />
-    <HomeOrderSection />
-    <HomeTestimonialsSection />
-    <HomeContactSection />
+    <LazyHomeOrderSection hydrate-on-visible />
+    <LazyHomeTestimonialsSection hydrate-on-visible />
+    <LazyHomeContactSection hydrate-on-visible />
   </div>
 </template>

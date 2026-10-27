@@ -82,8 +82,19 @@ function untilt() {
 }
 
 const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') hide() }
-onMounted(() => window.addEventListener('keydown', onKey))
+/* step aside while the footer is on screen, so it never covers footer text */
+const away = ref(false)
+let io: IntersectionObserver | undefined
+onMounted(() => {
+  window.addEventListener('keydown', onKey)
+  const footer = document.querySelector('footer')
+  if (footer) {
+    io = new IntersectionObserver(([e]) => { away.value = !!e?.isIntersecting }, { rootMargin: '0px 0px -60px 0px' })
+    io.observe(footer)
+  }
+})
 onBeforeUnmount(() => {
+  io?.disconnect()
   window.removeEventListener('keydown', onKey)
   tl?.kill()
   if (open.value) lockScroll(false)
@@ -91,7 +102,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="pl" :class="{ ready: introDone }">
+  <div class="pl" :class="{ ready: introDone, away }">
     <!-- the docked card -->
     <button ref="thumb" class="pl__dock" type="button" aria-haspopup="dialog" :aria-expanded="open" aria-label="Open the price list" @click="show">
       <span class="pl__tag"><AppIcon name="sparkle" /> Price list</span>
@@ -124,6 +135,8 @@ onBeforeUnmount(() => {
 /* ---------- dock ---------- */
 .pl { position: fixed; right: clamp(14px, 2vw, 30px); bottom: clamp(14px, 2.4vw, 30px); z-index: 55; pointer-events: none; opacity: 0; transform: translateY(40px) rotate(6deg); transition: opacity 0.6s var(--ease-out), transform 0.9s var(--ease-out); }
 .pl.ready { opacity: 1; transform: none; }
+.pl.ready.away { opacity: 0; transform: translateY(40px) rotate(6deg); }
+.pl.away .pl__dock { pointer-events: none; }
 .pl.ready .pl__dock { pointer-events: auto; }
 .pl__dock { position: relative; display: flex; align-items: flex-end; gap: 10px; }
 

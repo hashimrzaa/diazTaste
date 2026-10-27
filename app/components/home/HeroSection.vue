@@ -32,7 +32,7 @@ const anchorVars = computed(() => ({
   '--ay': anchor.ay,
   '--dn': anchor.dn || 1,
   // photo mode: pretend the jar sits exactly on the anchor
-  ...(still.value && { '--jar-xn': anchor.ax, '--jar-yn': anchor.ay, '--jar-hn': anchor.dn * (isMobile() ? 0.86 : 0.8) }),
+  ...(still.value && { '--jar-xn': anchor.ax, '--jar-yn': anchor.ay, '--jar-hn': anchor.dn * (isMobile() ? 0.72 : 0.8) }),
 }))
 let ro: ResizeObserver | undefined
 const p = computed(() => products[active.value]!)
@@ -121,7 +121,7 @@ onBeforeUnmount(() => { ro?.disconnect(); floatTl?.kill(); split.forEach((s) => 
 <template>
   <section id="top" ref="root" class="hx" :class="{ nogl: still }" :style="{ '--a': p.color.accent, '--d': p.color.deep, '--t': p.color.tint, ...anchorVars }" aria-labelledby="hx-title">
     <div class="hx__back">
-      <div class="hx__disc" aria-hidden="true"><span class="hx__glow" /></div>
+      <div class="hx__disc" aria-hidden="true"><span class="hx__dshadow" /><span class="hx__face"><span class="hx__glow" /></span></div>
       <Transition name="still">
         <img v-if="still" :key="p.slug" :src="p.image" :alt="`${p.name} jar`" class="hx__still" width="400" height="530" fetchpriority="high" />
       </Transition>
@@ -194,9 +194,13 @@ onBeforeUnmount(() => { ro?.disconnect(); floatTl?.kill(); split.forEach((s) => 
 
 .hx__disc { position: absolute; left: 50%; top: 52%; width: var(--D); aspect-ratio: 1;
   translate: calc(-50% + (var(--jar-xn, var(--ax, 0)) - var(--ax, 0)) * 1px) calc(-50% + (var(--jar-yn, var(--ay, 0)) - var(--ay, 0)) * 1px);
-  scale: calc(var(--jar-hn, calc(var(--dn, 1) * 0.8)) * 1.26 / var(--dn, 1)); border-radius: 50%; overflow: hidden;
-  background: radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 45%, color-mix(in srgb, var(--a) 35%, var(--t)) 100%);
-  box-shadow: 0 40px 90px -50px color-mix(in srgb, var(--a) 70%, transparent); transition: background 0.8s var(--ease-out), box-shadow 0.8s; }
+  scale: calc(var(--jar-hn, calc(var(--dn, 1) * 0.8)) * 1.26 / var(--dn, 1)); }
+/* the face clips the moving glow; the soft shadow is a plain gradient below it
+   (a blurred box-shadow on a scaled layer rasterised as a hard-edged box) */
+.hx__face { position: absolute; inset: 0; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 45%, color-mix(in srgb, var(--a) 35%, var(--t)) 100%); transition: background 0.8s var(--ease-out); }
+.hx__dshadow { position: absolute; left: 8%; right: 8%; top: 62%; height: 52%; border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--a) 38%, transparent), transparent); transition: background 0.8s; }
 .hx__glow { position: absolute; left: 30%; top: 25%; width: 70%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, 0.7), transparent 70%); animation: glow 8s ease-in-out infinite alternate; }
 /* no WebGL: a still photo of the jar stands in for the 3D one */
 .hx__still { position: absolute; left: 50%; top: 52%; height: calc(var(--D) * 0.864); width: auto; translate: -50% -50%; object-fit: contain; filter: drop-shadow(0 30px 30px rgba(30, 15, 10, 0.25)); animation: still-in 0.8s var(--ease-out); }
@@ -273,7 +277,7 @@ onBeforeUnmount(() => { ro?.disconnect(); floatTl?.kill(); split.forEach((s) => 
   .hx { --D: min(38vh, 78vw); }
   .hx__row, .hx__notes { display: none; }
   .hx__disc, .hx__hot, .hx__still { top: 57%; }
-  .hx__still { height: calc(var(--D) * 0.93); }
+  .hx__still { height: calc(var(--D) * 0.78); }
   .hx__mtitle { display: block; position: absolute; left: 0; right: 0; top: 92px; text-align: center; font-size: clamp(2.2rem, 11vw, 3rem); font-weight: 800; letter-spacing: -0.04em; }
   .hx__mtitle span { color: var(--a); transition: color 0.6s; }
   .hx__recipe { display: grid; gap: 4px; position: absolute; left: var(--gutter); right: var(--gutter); top: 150px; padding: 12px 16px; border-radius: 18px; background: #fff; box-shadow: 0 16px 36px -24px rgba(30, 15, 10, 0.4), inset 0 0 0 1px var(--line); border-left: 5px solid var(--a); }

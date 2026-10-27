@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
-import QRCode from 'qrcode'
 import { products, WHATSAPP_URL, WHATSAPP_DISPLAY, WHATSAPP_TEL } from '~/data/products'
 import { SOCIALS, socialHref, type Socials } from '~/data/socials'
 
@@ -9,11 +8,10 @@ const year = new Date().getFullYear()
 const { data: saved } = await useFetch<Socials>('/api/socials', { key: 'socials', default: () => ({}) })
 const socials = computed(() => SOCIALS.filter((s) => saved.value[s.key]).map((s) => ({ ...s, href: socialHref(s.key, saved.value[s.key]!) })))
 const root = ref<HTMLElement>()
-const qr = ref('')
+const qr = '/brand/dias-wa-qr.svg' // WhatsApp's own QR for WHATSAPP_URL (static: no QR maths at runtime)
 let ctx: gsap.Context | undefined
 
 onMounted(async () => {
-  qr.value = await QRCode.toDataURL(WHATSAPP_URL, { margin: 1, width: 400, errorCorrectionLevel: 'M', color: { dark: '#0f0f0f', light: '#ffffff' } })
 })
 
 onMounted(() => {
@@ -40,7 +38,7 @@ onBeforeUnmount(() => ctx?.revert())
       </div>
 
       <div class="ftr__contact">
-        <img v-if="qr" :src="qr" width="120" height="120" class="ftr__qr" alt="QR code to chat with Dia’s Taste on WhatsApp" />
+        <img :src="qr" loading="lazy" decoding="async" width="120" height="120" class="ftr__qr" alt="QR code to chat with Dia’s Taste on WhatsApp" />
         <div class="ftr__contact-text">
           <h2 class="eyebrow">Chat with us</h2>
           <a :href="WHATSAPP_TEL" target="_blank" rel="noopener" class="ftr__wa">

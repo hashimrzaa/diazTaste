@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
-import QRCode from 'qrcode'
 import { products } from '~/data/products'
 
 const ar = useAr()
@@ -27,6 +26,7 @@ const product = computed(() => products.find((p) => p.slug === ar.value.slug) ??
 let lastFocus: HTMLElement | null = null
 
 async function makeQr() {
+  const QRCode = (await import('qrcode')).default // only when the AR panel opens
   qr.value = await QRCode.toDataURL(absoluteUrl(`/chutney/${product.value.slug}?ar=1`), {
     margin: 1,
     width: 320,

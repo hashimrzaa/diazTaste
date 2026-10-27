@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
-import QRCode from 'qrcode'
 import { products, WHATSAPP_URL, WHATSAPP_DISPLAY, WHATSAPP_TEL } from '~/data/products'
 
 /* Shared "Hungry yet?" order block — used on the landing page and /flavours. */
 const root = ref<HTMLElement>()
-const qr = ref('')
+const qr = '/brand/dias-wa-qr.svg' // WhatsApp's own QR for WHATSAPP_URL (static: no QR maths at runtime)
 let ctx: gsap.Context | undefined
 
 onMounted(async () => {
@@ -18,7 +17,6 @@ onMounted(async () => {
       .fromTo('.od__qr', { rotateY: -70, opacity: 0, transformPerspective: 900 }, { rotateY: 0, opacity: 1, ease: 'power3.out' }, 0.3)
     if (!prefersReducedMotion()) gsap.to('.od__marquee', { xPercent: -50, ease: 'none', duration: 30, repeat: -1 })
   }, root.value)
-  qr.value = await QRCode.toDataURL(WHATSAPP_URL, { margin: 1, width: 400, errorCorrectionLevel: 'M', color: { dark: '#0f0f0f', light: '#ffffff' } })
 })
 onBeforeUnmount(() => ctx?.revert())
 </script>
@@ -40,7 +38,7 @@ onBeforeUnmount(() => ctx?.revert())
             </div>
           </div>
           <div class="od__qr">
-            <img v-if="qr" :src="qr" width="140" height="140" alt="QR code to order from Dia’s Taste on WhatsApp" />
+            <img :src="qr" loading="lazy" decoding="async" width="140" height="140" alt="QR code to order from Dia’s Taste on WhatsApp" />
             <p>Scan to chat<br /><a :href="WHATSAPP_TEL" target="_blank" rel="noopener" class="od__num"><AppIcon name="whatsapp" /> {{ WHATSAPP_DISPLAY }}</a></p>
           </div>
         </div>

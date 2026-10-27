@@ -103,7 +103,7 @@ const transition = {
   <main id="main">
     <NuxtPage :transition="transition" />
   </main>
-  <AppFooter v-if="!isAdmin" />
+  <LazyAppFooter v-if="!isAdmin" hydrate-on-visible />
   <PriceList v-if="!isAdmin" />
   <ClientOnly v-if="!isAdmin">
     <ArViewer />
