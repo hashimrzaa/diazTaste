@@ -2,6 +2,8 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { products } from '~/data/products'
+import unboundedLatin from '@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2?url'
+import manropeLatin from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url'
 
 const route = useRoute()
 const progress = useLoadProgress()
@@ -18,6 +20,11 @@ watch(() => route.params.slug, (slug) => {
 }, { immediate: true })
 const accent = computed(() => products[heroFlavour.value]?.color ?? products[0]!.color)
 useHead({ htmlAttrs: { style: computed(() => `--chili: ${accent.value.accent}; --chili-deep: ${accent.value.deep}`) } })
+// The splash waits for these two fonts, and the browser would otherwise only
+// find them after parsing the CSS. Preloading starts them with the HTML.
+useHead({
+  link: [unboundedLatin, manropeLatin].map((href) => ({ rel: 'preload', as: 'font', type: 'font/woff2', href, crossorigin: '' })),
+})
 
 onMounted(async () => {
   initSmoothScroll()

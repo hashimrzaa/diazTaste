@@ -117,7 +117,7 @@ onBeforeUnmount(() => {
 .is-open .hdr__burger span:first-child { transform: translateY(2.5px) rotate(45deg); }
 .is-open .hdr__burger span:last-child { transform: translateY(-2.5px) rotate(-45deg); }
 
-.hdr__tabs { display: flex; gap: 4px; padding: 5px; border-radius: 99px; background: color-mix(in srgb, var(--paper) 82%, transparent); backdrop-filter: blur(14px); box-shadow: 0 10px 26px -18px rgba(30, 15, 10, 0.4), inset 0 0 0 1px var(--line); }
+.hdr__tabs { display: flex; gap: 4px; padding: 5px; border-radius: 99px; background: color-mix(in srgb, var(--paper) 94%, transparent); box-shadow: 0 10px 26px -18px rgba(30, 15, 10, 0.4), inset 0 0 0 1px var(--line); }
 .hdr__tab { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 99px; font-size: 0.86rem; font-weight: 700; color: var(--ink-2); white-space: nowrap; transition: background 0.3s, color 0.3s; }
 .hdr__tab:hover { color: var(--ink); }
 .hdr__tab.on { background: var(--ink); color: var(--paper); }

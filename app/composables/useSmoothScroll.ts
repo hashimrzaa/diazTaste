@@ -12,6 +12,9 @@ export const prefersReducedMotion = () =>
  *  WebGL stage share a single frame loop. Disabled for reduced motion. */
 export function initSmoothScroll() {
   if (!import.meta.client || lenis || prefersReducedMotion()) return lenis
+  // Phones already scroll smoothly with their own physics; Lenis there only
+  // costs a frame callback forever. ScrollTrigger works with native scroll.
+  if (window.matchMedia('(pointer: coarse)').matches) return null
   lenis = new Lenis({ lerp: 0.14, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1.2 })
   lenis.on('scroll', ScrollTrigger.update)
   gsap.ticker.add(raf)

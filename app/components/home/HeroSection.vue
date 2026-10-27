@@ -197,13 +197,13 @@ onBeforeUnmount(() => { ro?.disconnect(); floatTl?.kill(); split.forEach((s) => 
   scale: calc(var(--jar-hn, calc(var(--dn, 1) * 0.8)) * 1.26 / var(--dn, 1)); border-radius: 50%; overflow: hidden;
   background: radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 45%, color-mix(in srgb, var(--a) 35%, var(--t)) 100%);
   box-shadow: 0 40px 90px -50px color-mix(in srgb, var(--a) 70%, transparent); transition: background 0.8s var(--ease-out), box-shadow 0.8s; }
-.hx__glow { position: absolute; left: 30%; top: 25%; width: 70%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, 0.7), transparent 70%); animation: glow 8s ease-in-out infinite alternate; }
+.hx__glow { position: absolute; left: 30%; top: 25%; width: 70%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, 0.7), transparent 70%); animation: glow 8s ease-in-out infinite alternate; }
 /* no WebGL: a still photo of the jar stands in for the 3D one */
 .hx__still { position: absolute; left: 50%; top: 52%; height: calc(var(--D) * 0.864); width: auto; translate: -50% -50%; object-fit: contain; filter: drop-shadow(0 30px 30px rgba(30, 15, 10, 0.25)); animation: still-in 0.8s var(--ease-out); }
 @keyframes still-in { from { opacity: 0; transform: translateY(20px); } }
 .still-leave-active { transition: opacity 0.7s ease 0.15s; }
 .still-leave-to { opacity: 0; }
-@keyframes glow { to { left: 62%; top: 40%; } }
+@keyframes glow { to { transform: translate(-4.3%, -28.6%); } }
 
 /* one straight line; each word fills its side, copy sits under it at the word's width */
 .hx { --col: calc((100vw - var(--D) - 6vh - 2 * var(--gutter)) / 2); --fsL: min(calc(var(--col) / 2.95), 19vh); --fsR: min(calc(var(--col) / 3.45), 17vh); }
@@ -213,7 +213,8 @@ onBeforeUnmount(() => { ro?.disconnect(); floatTl?.kill(); split.forEach((s) => 
 .hx__col--r { justify-content: flex-start; }
 .hx__stack { display: flex; flex-direction: column; gap: 2.6vh; width: min-content; }
 .hx__w { display: block; font-size: var(--fsL); font-weight: 800; line-height: 1; letter-spacing: -0.045em; white-space: nowrap; pointer-events: auto; }
-.hx__w--red { font-size: var(--fsR); padding-right: 0.06em; background: linear-gradient(100deg, var(--a) 0%, color-mix(in srgb, var(--a) 55%, #fff) 35%, var(--a) 60%, var(--d) 100%) 0 0 / 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s linear infinite; }
+.hx__w--red { font-size: var(--fsR); padding-right: 0.06em; background: linear-gradient(100deg, var(--a) 0%, color-mix(in srgb, var(--a) 55%, #fff) 35%, var(--a) 60%, var(--d) 100%) 0 0 / 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s linear 2.5s 2; }
+.hx__w--red:hover { animation: shine 3s linear infinite; }
 .hx__w--red :deep(.hx__c) { background: inherit; -webkit-background-clip: text; background-clip: text; padding: 0 0.08em; margin: 0 -0.08em; }
 @keyframes shine { to { background-position: -220% 0; } }
 :deep(.hx__c) { display: inline-block; will-change: transform; cursor: default; }
