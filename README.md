@@ -17,26 +17,38 @@ fallback that works on any device with a webcam.
 
 ```bash
 npm install
-npm run dev         # dev server
-npm run generate    # static build → .output/public
-npm run preview     # preview the static build
+npm run dev         # dev server (uses a local SQLite file, .data/dias.db)
+npm run build       # server build (Vercel)
 npx nuxi typecheck  # type check
 ```
 
-Set the canonical URL for production builds:
+## Database & admin
 
-```bash
-NUXT_PUBLIC_SITE_URL=https://your-domain.com npm run generate
-```
+Products, product photos, reviews, custom-order enquiries and footer social
+links live in SQLite — a [Turso](https://turso.tech) database in production, a
+local file in dev. `/admin` edits them and the site shows changes at once: no
+commits, no redeploys. On first run the database is filled from
+`app/data/catalog.json` plus five sample reviews (marked “Sample” in admin).
 
-Deploy the contents of `.output/public/` to any static host (Netlify, Cloudflare
-Pages, Vercel, S3…). No server runtime is required.
+Vercel → Project → Settings → Environment Variables:
+
+| Variable | What |
+| --- | --- |
+| `ADMIN_PASSWORD` | Password for `/admin` |
+| `TURSO_DATABASE_URL` | `libsql://<db>-<org>.turso.io` |
+| `TURSO_AUTH_TOKEN` | `turso db tokens create <db>` |
+| `NUXT_PUBLIC_SITE_URL` | Canonical URL, e.g. `https://diastaste.com` |
+
+Without the Turso variables the site still runs on the bundled catalogue, but
+saving, reviews and enquiries are off.
 
 ## Where things live
 
 | Path | What |
 | --- | --- |
-| `app/data/products.ts` | **Single source of truth** — flavours, copy, taste scores, prices, colours. Edit prices/ingredients here. |
+| `app/data/products.ts` | Product types and helpers; live data comes from the database (edit in `/admin`). `catalog.json` is the first-run seed and fallback. |
+| `server/utils/db.ts` | Database connection, schema, first-run seed. |
+| `server/api/` | Public (`catalog`, `testimonials`, `enquiries`, `socials`) and `admin/` endpoints. |
 | `app/three/Stage.ts` | WebGL engine: renderer, jar prep, cap animation, flavour carousel, lineup, DOM anchors. |
 | `app/three/ingredients.ts` | Procedural ingredients (chillies, mint, garlic, plums, dates, tamarind pods…) per flavour. |
 | `app/three/state.ts` | The shared `StageState` the scroll timelines tween. |

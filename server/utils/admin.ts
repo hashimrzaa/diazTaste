@@ -3,21 +3,12 @@ import type { H3Event } from 'h3'
 import type { Catalog, CatalogProduct } from '~~/app/data/products'
 
 /* ------------------------------------------------------------------ config
- * Set these in Vercel → Project → Settings → Environment Variables:
+ * Set in Vercel → Project → Settings → Environment Variables:
  *   ADMIN_PASSWORD   password for /admin (required)
- *   GITHUB_TOKEN     fine-grained token, this repo only, “Contents: read & write”
- *   GITHUB_REPO      optional, default hashimrzaa/diazTaste
- *   GITHUB_BRANCH    optional, default main
- * Without GITHUB_TOKEN, `nuxt dev` writes the files to disk instead.
+ * plus the database variables listed in server/utils/db.ts. Everything the
+ * admin saves goes straight to the database — no commits, no redeploys.
  */
-export const CATALOG_PATH = 'app/data/catalog.json'
-const cfg = () => ({
-  password: process.env.ADMIN_PASSWORD || '',
-  token: process.env.GITHUB_TOKEN || '',
-  repo: process.env.GITHUB_REPO || 'hashimrzaa/diazTaste',
-  branch: process.env.GITHUB_BRANCH || 'main',
-})
-const localMode = () => !cfg().token && import.meta.dev
+const cfg = () => ({ password: process.env.ADMIN_PASSWORD || '' })
 
 /* ------------------------------------------------------------------ session */
 const COOKIE = 'dt_admin'
@@ -48,75 +39,41 @@ export function requireAdmin(event: H3Event) {
 
 export const adminStatus = () => ({
   configured: !!cfg().password,
-  canPublish: !!cfg().token || localMode(),
-  mode: cfg().token ? 'github' : localMode() ? 'local' : 'none',
+  canPublish: dbConfigured(),
+  mode: dbMode(),
 })
 
-/* ------------------------------------------------------------------ storage (GitHub contents API, or disk in dev) */
-async function gh<T>(path: string, init: { method?: string; body?: unknown } = {}): Promise<T> {
-  const { token, repo } = cfg()
-  return (await ($fetch as (u: string, o: object) => Promise<unknown>)(`https://api.github.com/repos/${repo}/contents/${path}`, {
-    method: (init.method as 'GET' | 'PUT') || 'GET',
-    body: init.body as Record<string, unknown> | undefined,
-    query: init.method ? undefined : { ref: cfg().branch },
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'dias-taste-admin' },
-  }).catch((e: { status?: number; data?: { message?: string } }) => {
-    throw createError({ statusCode: e?.status === 404 ? 404 : 502, statusMessage: `GitHub: ${e?.data?.message || e?.status || 'request failed'}` })
-  })) as T
-}
+/* ------------------------------------------------------------------ storage (database) */
+const bundled = async () => (await import('~~/app/data/catalog.json')).default as Catalog
 
-/** Current catalogue: the latest commit on GitHub (so the panel shows saved
- *  edits even before the redeploy finishes), else the bundled copy. */
-export async function readCatalog(): Promise<{ catalog: Catalog; sha?: string }> {
-  if (cfg().token) {
-    try {
-      const f = await gh<{ content: string; sha: string }>(CATALOG_PATH)
-      return { catalog: JSON.parse(Buffer.from(f.content, 'base64').toString('utf8')), sha: f.sha }
-    } catch (e) {
-      // not on GitHub yet (never pushed): start from this build's copy; the first save creates it
-      if ((e as { statusCode?: number }).statusCode !== 404) throw e
-      return { catalog: (await import('~~/app/data/catalog.json')).default as Catalog }
-    }
-  }
-  if (localMode()) {
-    const { readFile } = await import('node:fs/promises')
-    return { catalog: JSON.parse(await readFile(CATALOG_PATH, 'utf8')) }
-  }
-  return { catalog: (await import('~~/app/data/catalog.json')).default as Catalog }
-}
+/** Admin's copy: every product (hidden ones too) plus the version for the “someone else saved” check. */
+export const readCatalog = () => readCatalogRow()
+export const writeCatalog = (c: Catalog, version: number) => writeCatalogRow(c, version)
 
-async function writeFile(path: string, content: Buffer, message: string, sha?: string) {
-  if (cfg().token) {
-    let current = sha
-    if (current === undefined) current = await gh<{ sha: string }>(path).then((f) => f.sha, () => undefined)
-    const res = await gh<{ commit: { sha: string; html_url: string } }>(path, {
-      method: 'PUT',
-      body: { message, content: content.toString('base64'), branch: cfg().branch, ...(current && { sha: current }) },
-    })
-    return { commit: res.commit.sha.slice(0, 7), url: res.commit.html_url }
+/** What the public site renders. Falls back to the bundled copy if the
+ *  database isn't set up or can't be reached, so the shop never goes blank. */
+export async function readPublicCatalog(): Promise<Catalog> {
+  let catalog: Catalog
+  try {
+    catalog = dbConfigured() ? (await readCatalogRow()).catalog : await bundled()
+  } catch (e) {
+    console.error('[catalog] database read failed, serving the bundled copy:', e)
+    catalog = await bundled()
   }
-  if (localMode()) {
-    const fs = await import('node:fs/promises')
-    const { dirname } = await import('node:path')
-    await fs.mkdir(dirname(path), { recursive: true })
-    await fs.writeFile(path, content)
-    return { commit: 'local', url: '' }
-  }
-  throw createError({ statusCode: 503, statusMessage: 'Publishing is not set up: add GITHUB_TOKEN in Vercel.' })
+  return { ...catalog, products: catalog.products.filter((p) => !p.hidden) }
 }
-
-export const writeCatalog = (c: Catalog, sha: string | undefined, message: string) =>
-  writeFile(CATALOG_PATH, Buffer.from(JSON.stringify(c, null, 2) + '\n', 'utf8'), message, sha)
 
 const IMAGE_TYPES: Record<string, string> = { 'image/webp': 'webp', 'image/png': 'png', 'image/jpeg': 'jpg' }
-export const MAX_IMAGE = 3 * 1024 * 1024
+export const MAX_IMAGE = 2 * 1024 * 1024
+/** Product photos live in the database too and are served from /media/<name>. */
 export async function writeImage(slug: string, type: string, data: Buffer) {
   const ext = IMAGE_TYPES[type]
   if (!ext) throw createError({ statusCode: 400, statusMessage: 'Use a WebP, PNG or JPG image.' })
-  if (data.length > MAX_IMAGE) throw createError({ statusCode: 413, statusMessage: 'Image is over 3 MB.' })
+  if (data.length > MAX_IMAGE) throw createError({ statusCode: 413, statusMessage: 'Image is over 2 MB.' })
   const name = `${slug}-${Date.now().toString(36)}.${ext}`
-  const r = await writeFile(`public/images/uploads/${name}`, data, `admin: new photo for ${slug}`)
-  return { path: `/images/uploads/${name}`, ...r }
+  const db = await useDb()
+  await db.execute({ sql: 'INSERT INTO media (name, type, data, created_at) VALUES (?, ?, ?, ?)', args: [name, type, new Uint8Array(data), Date.now()] })
+  return { path: `/media/${name}` }
 }
 
 /* ------------------------------------------------------------------ validation
@@ -155,7 +112,7 @@ export function sanitizeCatalog(input: unknown, current: Catalog): Catalog {
       .filter((s) => s.price === null || Number.isFinite(s.price))
       .slice(0, 4)
     if (!sizes.length) throw createError({ statusCode: 400, statusMessage: `${label}: add at least one size.` })
-    const image = typeof p.image === 'string' && /^\/images\/[\w./-]+\.(webp|png|jpe?g)$/i.test(p.image) && !p.image.includes('..') ? p.image : old.image
+    const image = typeof p.image === 'string' && /^\/(images|media)\/[\w./-]+\.(webp|png|jpe?g)$/i.test(p.image) && !p.image.includes('..') ? p.image : old.image
     return {
       slug: old.slug,
       hidden: !!p.hidden,

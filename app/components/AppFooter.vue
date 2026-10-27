@@ -2,8 +2,12 @@
 import { gsap } from 'gsap'
 import QRCode from 'qrcode'
 import { products, WHATSAPP_URL, WHATSAPP_DISPLAY, WHATSAPP_TEL } from '~/data/products'
+import { SOCIALS, socialHref, type Socials } from '~/data/socials'
 
 const year = new Date().getFullYear()
+// only the networks that have a link in /admin
+const { data: saved } = await useFetch<Socials>('/api/socials', { key: 'socials', default: () => ({}) })
+const socials = computed(() => SOCIALS.filter((s) => saved.value[s.key]).map((s) => ({ ...s, href: socialHref(s.key, saved.value[s.key]!) })))
 const root = ref<HTMLElement>()
 const qr = ref('')
 let ctx: gsap.Context | undefined
@@ -44,6 +48,11 @@ onBeforeUnmount(() => ctx?.revert())
             <span>{{ WHATSAPP_DISPLAY || 'Message us on WhatsApp' }}</span>
           </a>
           <p class="ftr__wa-sub">Scan the QR with your phone camera, or tap to open a chat. We confirm your order, price &amp; delivery there.</p>
+          <ul v-if="socials.length" class="ftr__social" aria-label="Find Dia’s Taste on">
+            <li v-for="s in socials" :key="s.key">
+              <a :href="s.href" :target="s.key === 'email' ? undefined : '_blank'" rel="noopener" :aria-label="s.label" :title="s.label" :class="`ftr__s--${s.key}`"><AppIcon :name="s.key" /></a>
+            </li>
+          </ul>
         </div>
         <span class="ftr__badge"><BrandLogo /></span>
       </div>
@@ -61,6 +70,8 @@ onBeforeUnmount(() => ctx?.revert())
           <h2 class="eyebrow">Explore</h2>
           <ul>
             <li><NuxtLink to="/flavours">Flavours</NuxtLink></li>
+            <li><NuxtLink to="/#reviews">Reviews</NuxtLink></li>
+            <li><NuxtLink to="/#contact">Custom orders</NuxtLink></li>
             <li><a :href="WHATSAPP_URL" target="_blank" rel="noopener">WhatsApp</a></li>
           </ul>
         </div>
@@ -157,6 +168,41 @@ onBeforeUnmount(() => ctx?.revert())
   font-size: var(--fs-small);
   color: rgba(244, 235, 221, 0.6);
 }
+.ftr__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+.ftr__social a {
+  --c: var(--chili);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--cream);
+  box-shadow: inset 0 0 0 1.5px rgba(244, 235, 221, 0.22);
+  transition: background 0.35s var(--ease-out), color 0.35s, transform 0.45s var(--ease-out), box-shadow 0.35s;
+}
+.ftr__social a:hover {
+  background: var(--c);
+  color: #fff;
+  box-shadow: none;
+  transform: translateY(-4px) rotate(-8deg);
+}
+.ftr__social :deep(svg) {
+  width: 20px;
+  height: 20px;
+}
+.ftr__s--instagram { --c: #d6249f; }
+.ftr__s--facebook { --c: #1877f2; }
+.ftr__s--whatsapp { --c: #1f8f4e; }
+.ftr__s--tiktok { --c: #222; }
+.ftr__s--youtube { --c: #e62117; }
+.ftr__s--x { --c: #222; }
+.ftr__s--snapchat { --c: #e8b800; }
+.ftr__s--pinterest { --c: #e60023; }
 .ftr__cols {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

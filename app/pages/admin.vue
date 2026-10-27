@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Catalog, CatalogProduct } from '~/data/products'
 
-/* /admin — show/hide products and edit everything about them.
-   Saving commits app/data/catalog.json to GitHub; Vercel then redeploys the
-   site (about 1–2 minutes). Not linked anywhere, never indexed. */
+/* /admin — products (show/hide, edit everything), reviews (approve before they
+   go live) and custom-order enquiries. Everything saves to the database and is
+   live straight away — no redeploy. Not linked anywhere, never indexed. */
 useHead({ title: 'Admin', meta: [{ name: 'robots', content: 'noindex, nofollow' }] })
 
-interface Session { loggedIn: boolean; configured: boolean; canPublish: boolean; mode: 'github' | 'local' | 'none' }
+interface Session { loggedIn: boolean; configured: boolean; canPublish: boolean; mode: 'turso' | 'local' | 'none' }
 type Editable = CatalogProduct & { _ingredients: string; _allergens: string; _pairs: string; _steps: string }
 
 const session = ref<Session>()
@@ -14,11 +14,13 @@ const password = ref('')
 const loginError = ref('')
 const busy = ref(false)
 const items = ref<Editable[]>([])
-const sha = ref<string>()
+const version = ref<number>()
+const tab = ref<'products' | 'reviews' | 'enquiries' | 'socials'>('products')
+const counts = reactive({ reviews: 0, enquiries: 0 }) // items waiting for a look, shown on the tabs
 const defaultSlug = ref<string>()
 const saved = ref('') // JSON of the last saved state, for the “unsaved” check
 const open = ref<string | null>(null)
-const msg = ref<{ kind: 'ok' | 'err'; text: string; url?: string } | null>(null)
+const msg = ref<{ kind: 'ok' | 'err'; text: string } | null>(null)
 const uploading = ref<string | null>(null)
 const loadError = ref('')
 
@@ -52,13 +54,13 @@ async function loadSession() {
 }
 async function loadCatalog() {
   loadError.value = ''
-  const r = await $fetch<{ catalog: Catalog; sha?: string }>('/api/admin/catalog').catch((e) => {
+  const r = await $fetch<{ catalog: Catalog; version: number }>('/api/admin/catalog').catch((e) => {
     loadError.value = errText(e)
     throw e
   })
   items.value = r.catalog.products.map(toEditable)
   defaultSlug.value = [r.catalog.defaultSlug ?? 'aloo-bukhara'].find((s) => r.catalog.products.some((p) => p.slug === s && !p.hidden)) ?? r.catalog.products.find((p) => !p.hidden)?.slug
-  sha.value = r.sha
+  version.value = r.version
   saved.value = JSON.stringify(toCatalog())
 }
 async function login() {
@@ -84,21 +86,15 @@ async function save() {
   busy.value = true
   msg.value = null
   try {
-    const before = new Map((JSON.parse(saved.value) as Catalog).products.map((x) => [x.slug, JSON.stringify(x)]))
-    const now = toCatalog()
-    const changed = now.products.filter((x) => before.get(x.slug) !== JSON.stringify(x)).map((x) => x.short)
-    if (now.products.map((x) => x.slug).join() !== [...before.keys()].join()) changed.push('order')
-    const r = await $fetch<{ commit: string; url: string; sha?: string; catalog: Catalog }>('/api/admin/catalog', {
+    const r = await $fetch<{ version: number; catalog: Catalog }>('/api/admin/catalog', {
       method: 'PUT',
-      body: { catalog: toCatalog(), sha: sha.value, note: changed.length ? `update ${changed.join(', ')}` : undefined },
+      body: { catalog: toCatalog(), version: version.value },
     })
     items.value = r.catalog.products.map(toEditable)
     defaultSlug.value = r.catalog.defaultSlug
-    sha.value = r.sha
+    version.value = r.version
     saved.value = JSON.stringify(toCatalog())
-    msg.value = r.commit === 'local'
-      ? { kind: 'ok', text: 'Saved to app/data/catalog.json (local dev).' }
-      : { kind: 'ok', text: 'Saved. The live site updates in about 1–2 minutes, once Vercel finishes rebuilding.', url: r.url }
+    msg.value = { kind: 'ok', text: 'Saved — the live site shows it now.' }
   } catch (e) {
     msg.value = { kind: 'err', text: errText(e) }
   } finally {
@@ -127,7 +123,7 @@ async function upload(p: Editable, e: Event) {
   const file = input.files?.[0]
   input.value = ''
   if (!file) return
-  if (file.size > 3 * 1024 * 1024) { msg.value = { kind: 'err', text: 'That image is over 3 MB. Please use a smaller one.' }; return }
+  if (file.size > 2 * 1024 * 1024) { msg.value = { kind: 'err', text: 'That image is over 2 MB. Please use a smaller one.' }; return }
   uploading.value = p.slug
   msg.value = null
   try {
@@ -136,7 +132,6 @@ async function upload(p: Editable, e: Event) {
     fd.append('file', await toWebp(file))
     const r = await $fetch<{ path: string }>('/api/admin/upload', { method: 'POST', body: fd })
     p.image = r.path
-    previews[r.path] = URL.createObjectURL(file) // the new file is only served after the redeploy
     msg.value = { kind: 'ok', text: `New photo uploaded for ${p.short}. Press “Save & publish” to use it.` }
   } catch (err) {
     msg.value = { kind: 'err', text: errText(err) }
@@ -144,8 +139,6 @@ async function upload(p: Editable, e: Event) {
     uploading.value = null
   }
 }
-const previews = reactive<Record<string, string>>({})
-const imgSrc = (p: Editable) => previews[p.image] || p.image
 
 function addSize(p: Editable) { if (p.sizes.length < 4) p.sizes.push({ label: '', price: null }) }
 function removeSize(p: Editable, i: number) { if (p.sizes.length > 1) p.sizes.splice(i, 1) }
@@ -203,6 +196,24 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn))
 
     <!-- editor -->
     <main v-else class="ad__main">
+      <nav class="ad__tabs" aria-label="Admin sections">
+        <button :class="{ on: tab === 'products' }" @click="tab = 'products'">Products</button>
+        <button :class="{ on: tab === 'reviews' }" @click="tab = 'reviews'">Reviews <b v-if="counts.reviews">{{ counts.reviews }}</b></button>
+        <button :class="{ on: tab === 'enquiries' }" @click="tab = 'enquiries'">Enquiries <b v-if="counts.enquiries">{{ counts.enquiries }}</b></button>
+        <button :class="{ on: tab === 'socials' }" @click="tab = 'socials'">Social links</button>
+      </nav>
+      <p v-if="!session.canPublish" class="ad__note ad__note--err ad__setup">
+        The database isn’t connected: add <code>TURSO_DATABASE_URL</code> and <code>TURSO_AUTH_TOKEN</code> in Vercel, then redeploy.
+        Until then the site shows the built-in products, and saving, reviews and enquiries are off.
+      </p>
+
+      <template v-if="session.canPublish">
+        <AdminReviews v-show="tab === 'reviews'" @count="counts.reviews = $event" />
+        <AdminEnquiries v-show="tab === 'enquiries'" @count="counts.enquiries = $event" />
+        <AdminSocials v-if="tab === 'socials'" />
+      </template>
+
+      <template v-if="tab === 'products'">
       <div class="ad__intro">
         <h1 class="display">Products</h1>
         <p>{{ visibleCount }} of {{ items.length }} showing on the site. Changes go live after you press <b>Save &amp; publish</b>.</p>
@@ -210,15 +221,12 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn))
           Couldn’t load the products: {{ loadError }}
           <button class="ad__ghost ad__sm" style="margin-left: 8px" @click="loadCatalog().catch(() => {})">Try again</button>
         </p>
-        <p v-if="!session.canPublish" class="ad__note ad__note--err">
-          Saving is off: add a <code>GITHUB_TOKEN</code> environment variable in Vercel (fine-grained token for this repo, “Contents: read and write”).
-        </p>
       </div>
 
       <section v-for="(p, i) in items" :key="p.slug" class="ad__card" :class="{ off: p.hidden, open: open === p.slug }" :style="{ '--a': p.color.accent, '--t': p.color.tint, '--d': p.color.deep }">
         <div class="ad__row">
           <button class="ad__head" :aria-expanded="open === p.slug" @click="open = open === p.slug ? null : p.slug">
-            <img :src="imgSrc(p)" alt="" width="48" height="64" />
+            <img :src="p.image" alt="" width="48" height="64" />
             <span class="ad__title">
               <strong class="display">{{ p.name || 'Untitled' }}</strong>
               <small>{{ p.sizes.map((s) => `${s.label}${s.price != null && (s.price as unknown) !== '' ? ` · Rs ${s.price}` : ''}`).join('  |  ') }}</small>
@@ -243,12 +251,16 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn))
         <div v-if="open === p.slug" class="ad__body">
           <div class="ad__grid">
             <div class="ad__photo">
-              <img :src="imgSrc(p)" :alt="p.name" />
+              <img :src="p.image" :alt="p.name" />
               <label class="ad__ghost ad__file">
                 {{ uploading === p.slug ? 'Uploading…' : 'Change photo' }}
                 <input type="file" accept="image/webp,image/png,image/jpeg" :disabled="!!uploading" @change="upload(p, $event)" />
               </label>
+<<<<<<< HEAD
               <small>PNG, JPG or WebP. It’s saved as WebP automatically. Transparent background works best.</small>
+=======
+              <small>WebP or PNG with a transparent background works best. Max 2 MB.</small>
+>>>>>>> 3b127c692ff58a1c04e433b2c9ed77180620bcf3
             </div>
 
             <div class="ad__fields">
@@ -304,10 +316,11 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn))
           </fieldset>
         </div>
       </section>
+      </template>
 
       <div class="ad__bar" :class="{ show: dirty || msg }">
         <p v-if="msg" class="ad__msg" :class="msg.kind">
-          {{ msg.text }} <a v-if="msg.url" :href="msg.url" target="_blank" rel="noopener">See change ↗</a>
+          {{ msg.text }}
         </p>
         <p v-else class="ad__msg">You have unsaved changes.</p>
         <div class="ad__actions">
@@ -336,9 +349,12 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn))
 .ad__intro h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
 .ad__intro p { margin-top: 6px; color: var(--ink-2); }
 
-.ad__note { padding: 12px 14px; border-radius: 12px; background: #fff7e6; box-shadow: inset 0 0 0 1px #f0d9a8; font-size: 0.88rem; line-height: 1.45; }
-.ad__note--err { background: #fdecec; box-shadow: inset 0 0 0 1px #f2c3c3; color: #7a1212; }
-code { font-size: 0.85em; padding: 1px 5px; border-radius: 5px; background: rgba(30, 15, 10, 0.07); }
+.ad__setup { margin-top: 14px; }
+.ad__tabs { display: flex; gap: 4px; width: max-content; max-width: 100%; margin-top: 24px; padding: 5px; border-radius: 99px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); overflow-x: auto; }
+.ad__tabs button { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 99px; font-weight: 700; font-size: 0.88rem; color: var(--ink-2); white-space: nowrap; }
+.ad__tabs button:hover { color: var(--ink); }
+.ad__tabs button.on { background: var(--ink); color: var(--paper); }
+.ad__tabs b { display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 99px; background: var(--chili); color: #fff; font-size: 0.72rem; }
 
 .ad__card { margin-top: 12px; border-radius: 20px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); border-left: 5px solid var(--a); transition: opacity 0.3s; overflow: hidden; }
 .ad__card.off { opacity: 0.62; }
@@ -381,17 +397,6 @@ code { font-size: 0.85em; padding: 1px 5px; border-radius: 5px; background: rgba
 .ad__fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }
 .ad__span2 { grid-column: span 2; }
 
-.ad__field { display: grid; gap: 5px; }
-.ad__field > span, .ad__set legend { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
-.ad__field small, .ad__set legend small { text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--ink-3); }
-input:not([type='checkbox']):not([type='range']):not([type='color']):not([type='file']), textarea {
-  width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line-strong); background: #fff; font: inherit; color: var(--ink); line-height: 1.45;
-}
-textarea { resize: vertical; }
-input:focus, textarea:focus { outline: 2px solid var(--a, var(--ink)); outline-offset: 0; border-color: transparent; }
-
-.ad__set { display: grid; gap: 10px; min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 14px; }
-.ad__set legend { padding: 0 6px; }
 .ad__size { display: grid; grid-template-columns: minmax(0, 160px) auto minmax(0, 160px) auto; justify-content: start; align-items: center; gap: 8px; }
 .ad__rs { color: var(--ink-3); font-weight: 700; }
 .ad__x { width: 34px; height: 34px; border-radius: 8px; font-size: 1.2rem; color: var(--ink-3); }
@@ -407,12 +412,6 @@ input:focus, textarea:focus { outline: 2px solid var(--a, var(--ink)); outline-o
 .ad__colour span { display: grid; }
 .ad__colour code { justify-self: start; margin-top: 2px; font-size: 0.72rem; }
 
-.ad__btn { height: 44px; padding: 0 22px; border-radius: 99px; background: var(--ink); color: var(--paper); font-weight: 700; transition: opacity 0.2s, background 0.2s; }
-.ad__btn:hover:not(:disabled) { background: #1f8f4e; }
-.ad__btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.ad__ghost { display: inline-flex; align-items: center; justify-content: center; height: 38px; padding: 0 16px; border-radius: 99px; box-shadow: inset 0 0 0 1px var(--line-strong); font-weight: 700; font-size: 0.85rem; background: var(--paper); }
-.ad__ghost:hover:not(:disabled) { background: #fff; }
-.ad__sm { justify-self: start; height: 32px; font-size: 0.8rem; }
 
 .ad__bar { position: fixed; left: 50%; bottom: 16px; z-index: 6; display: flex; align-items: center; gap: 16px; width: min(1040px, calc(100% - 2 * var(--gutter))); padding: 12px 12px 12px 20px; border-radius: 20px; background: var(--ink); color: var(--paper); box-shadow: 0 20px 50px -20px rgba(30, 15, 10, 0.6); transform: translate(-50%, 140%); visibility: hidden; transition: transform 0.4s var(--ease-out), visibility 0s 0.4s; }
 .ad__bar.show { transform: translate(-50%, 0); visibility: visible; transition: transform 0.4s var(--ease-out); }
@@ -439,4 +438,30 @@ input:focus, textarea:focus { outline: 2px solid var(--a, var(--ink)); outline-o
   .ad__bar { flex-direction: column; align-items: stretch; gap: 10px; padding: 14px; }
   .ad__actions { justify-content: flex-end; }
 }
+</style>
+
+<style>
+/* Building blocks shared with the Reviews and Enquiries tabs (components/admin/*) */
+.ad .ad__note { padding: 12px 14px; border-radius: 12px; background: #fff7e6; box-shadow: inset 0 0 0 1px #f0d9a8; font-size: 0.88rem; line-height: 1.45; }
+.ad .ad__note--err { background: #fdecec; box-shadow: inset 0 0 0 1px #f2c3c3; color: #7a1212; }
+.ad code { font-size: 0.85em; padding: 1px 5px; border-radius: 5px; background: rgba(30, 15, 10, 0.07); }
+
+.ad .ad__field { display: grid; gap: 5px; }
+.ad .ad__field > span, .ad .ad__set legend { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+.ad .ad__field small, .ad .ad__set legend small { text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--ink-3); }
+.ad input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='file']), .ad textarea, .ad select {
+  width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line-strong); background: #fff; font: inherit; color: var(--ink); line-height: 1.45;
+}
+.ad textarea { resize: vertical; }
+.ad input:focus, .ad textarea:focus, .ad select:focus { outline: 2px solid var(--a, var(--ink)); outline-offset: 0; border-color: transparent; }
+.ad .ad__set { display: grid; gap: 10px; min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 14px; }
+.ad .ad__set legend { padding: 0 6px; }
+
+.ad .ad__btn { height: 44px; padding: 0 22px; border-radius: 99px; background: var(--ink); color: var(--paper); font-weight: 700; transition: opacity 0.2s, background 0.2s; }
+.ad .ad__btn:hover:not(:disabled) { background: #1f8f4e; }
+.ad .ad__btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.ad .ad__ghost { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 38px; padding: 0 16px; border-radius: 99px; box-shadow: inset 0 0 0 1px var(--line-strong); font-weight: 700; font-size: 0.85rem; background: var(--paper); white-space: nowrap; }
+.ad .ad__ghost:hover:not(:disabled) { background: #fff; }
+.ad .ad__ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+.ad .ad__sm { justify-self: start; height: 32px; font-size: 0.8rem; }
 </style>

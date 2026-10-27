@@ -1,10 +1,13 @@
 /**
- * Product catalogue. The data lives in `catalog.json` (edited from /admin,
- * which commits it to the repo and triggers a redeploy); this file types it
- * and derives what the pages need.
+ * Product catalogue. The live data is in the database (edited from /admin);
+ * app/plugins/catalog.ts loads it before the app renders and passes it to
+ * `setCatalog`. `catalog.json` is the first-run seed and the fallback when the
+ * database can't be reached. This file types it and derives what the pages need.
  *
  * Only products with `hidden: false` reach the site. Indexes used across the
  * site (hero flavour, 3D stage, shelf) are indexes into the visible list.
+ * `products` and `DEFAULT_FLAVOUR` are live bindings: read them when needed,
+ * don't copy them at module load.
  */
 import catalog from './catalog.json'
 
@@ -61,11 +64,17 @@ const derive = (p: CatalogProduct): Product => {
   return { ...p, weight: p.sizes.map((s) => s.label).join(' · '), price: priced.length ? Math.min(...priced) : null }
 }
 
-export const allProducts: Product[] = (catalog as Catalog).products.map(derive)
-export const products: Product[] = allProducts.filter((p) => !p.hidden)
-
+export let products: Product[] = []
 /** Index (in the visible list) of the flavour the site opens on — set in /admin. */
-export const DEFAULT_FLAVOUR = Math.max(0, products.findIndex((p) => p.slug === ((catalog as Catalog).defaultSlug ?? 'aloo-bukhara')))
+export let DEFAULT_FLAVOUR = 0
+
+export function setCatalog(c: Catalog) {
+  const visible = c.products.filter((p) => !p.hidden)
+  if (!visible.length) return
+  products = visible.map(derive)
+  DEFAULT_FLAVOUR = Math.max(0, products.findIndex((p) => p.slug === (c.defaultSlug ?? 'aloo-bukhara')))
+}
+setCatalog(catalog as Catalog)
 
 export const getProduct = (slug: string) => products.find((p) => p.slug === slug)
 

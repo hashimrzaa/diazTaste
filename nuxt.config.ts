@@ -48,12 +48,8 @@ export default defineNuxtConfig({
     '/api/**': { headers: { 'Cache-Control': 'no-store' } },
   },
 
-  nitro: {
-    prerender: {
-      crawlLinks: true,
-      routes: ['/', '/flavours', '/privacy', '/terms', '/cookies', '/accessibility'],
-    },
-  },
+  // Pages render on request (not prerendered) so products and reviews edited in
+  // /admin show up straight away — the data lives in the database, not the build.
 
   vite: {
     optimizeDeps: { include: ['three', 'gsap', 'gsap/ScrollTrigger', 'gsap/SplitText', 'lenis', 'qrcode'] },
