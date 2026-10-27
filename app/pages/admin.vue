@@ -106,6 +106,22 @@ async function save() {
   }
 }
 
+/** Every photo goes up as WebP (keeps transparency), at most 1600 px tall. */
+async function toWebp(file: File): Promise<File> {
+  if (file.type === 'image/webp') return file
+  const bmp = await createImageBitmap(file)
+  const k = Math.min(1, 1600 / bmp.height)
+  const c = document.createElement('canvas')
+  c.width = Math.round(bmp.width * k)
+  c.height = Math.round(bmp.height * k)
+  c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height)
+  bmp.close()
+  const blob = await new Promise<Blob | null>((r) => c.toBlob(r, 'image/webp', 0.9))
+  // very old browsers can't encode WebP; send the original rather than fail
+  if (!blob || blob.type !== 'image/webp') return file
+  return new File([blob], file.name.replace(/\.\w+$/, '') + '.webp', { type: 'image/webp' })
+}
+
 async function upload(p: Editable, e: Event) {
   const input = e.target as HTMLInputElement
   const file = input.files?.[0]
@@ -117,7 +133,7 @@ async function upload(p: Editable, e: Event) {
   try {
     const fd = new FormData()
     fd.append('slug', p.slug)
-    fd.append('file', file)
+    fd.append('file', await toWebp(file))
     const r = await $fetch<{ path: string }>('/api/admin/upload', { method: 'POST', body: fd })
     p.image = r.path
     previews[r.path] = URL.createObjectURL(file) // the new file is only served after the redeploy
@@ -232,7 +248,7 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', warn))
                 {{ uploading === p.slug ? 'Uploading…' : 'Change photo' }}
                 <input type="file" accept="image/webp,image/png,image/jpeg" :disabled="!!uploading" @change="upload(p, $event)" />
               </label>
-              <small>WebP or PNG with a transparent background works best. Max 3 MB.</small>
+              <small>PNG, JPG or WebP. It’s saved as WebP automatically. Transparent background works best.</small>
             </div>
 
             <div class="ad__fields">

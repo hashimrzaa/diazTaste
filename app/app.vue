@@ -97,6 +97,7 @@ const transition = {
     <NuxtPage :transition="transition" />
   </main>
   <AppFooter v-if="!isAdmin" />
+  <PriceList v-if="!isAdmin" />
   <ClientOnly v-if="!isAdmin">
     <ArViewer />
   </ClientOnly>
